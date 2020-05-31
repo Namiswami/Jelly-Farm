@@ -1,4 +1,4 @@
-package org.meijer.jelly.jellyFarmBreeder.model.jelly;
+package org.meijer.jelly.jellyFarmService.model.jelly;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

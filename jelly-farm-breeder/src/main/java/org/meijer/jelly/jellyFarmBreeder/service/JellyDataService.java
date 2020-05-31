@@ -1,19 +1,18 @@
 package org.meijer.jelly.jellyFarmBreeder.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.meijer.jelly.jellyFarmBreeder.model.cage.Cage;
+import org.meijer.jelly.jellyFarmBreeder.model.cage.CageDTO;
+import org.meijer.jelly.jellyFarmBreeder.model.cage.CageListDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.Jelly;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +34,15 @@ public class JellyDataService {
     }
 
 
-    public List<Cage> getCages() {
-        return null;
+    public List<CageDTO> getCages() {
+        ResponseEntity<CageListDTO> response = restTemplate.getForEntity(cageEndpoint, CageListDTO.class);
+
+        if(response.getBody() == null) new ArrayList<>();
+        return response.getBody().getCageDTOList();
     }
 
-    public List<Jelly> getUnsoldJellies(int cageNumber) {
-        Map<String, Integer> params = new HashMap<>();
+    public List<Jelly> getUnsoldJellies(long cageNumber) {
+        Map<String, Long> params = new HashMap<>();
         params.put("cageNumber", cageNumber);
 
         ResponseEntity<JellyListDTO> response = restTemplate.getForEntity(jellyEndpoint, JellyListDTO.class, params);

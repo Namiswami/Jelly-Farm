@@ -1,13 +1,12 @@
 package org.meijer.jelly.jellyFarmBreeder.model.jelly;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
@@ -18,12 +17,18 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @Slf4j
-public class Jelly {
+@NoArgsConstructor
+public class Jelly implements Serializable {
+    @JsonProperty("id")
     private UUID id;
+    @JsonProperty("gender")
     private Gender gender;
+    @JsonProperty("color")
     private Color color;
-    private LocalDateTime dateTimeSold;
-    private int cageNumber;
+    @JsonProperty("dateTimeFreed")
+    private LocalDateTime dateTimeFreed;
+    @JsonProperty("cageNumber")
+    private long cageNumber;
 
     public JellyCouple formCouple(List<Jelly> females) {
         Jelly mate = pickMate(females);
