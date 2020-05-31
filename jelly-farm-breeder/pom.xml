@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>aa.meijer.jelly</groupId>
-	<artifactId>jellyFarmService</artifactId>
+	<artifactId>jellyFarmBreeder</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>jelly-farm-service</name>
-	<description>Read and Write state for the jelly farm application</description>
+	<name>jelly-farm-breeder</name>
+	<description>Controls the breeding logic for the jelly farm application</description>
 
 	<properties>
 		<java.version>1.8</java.version>

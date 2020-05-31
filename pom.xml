@@ -11,8 +11,6 @@
     <modules>
         <module>jelly-farm-service</module>
         <module>jelly-farm-breeder</module>
-	    <module>jelly-farm-docker</module>
-	    <module>jelly-farm-front-end</module>
     </modules>
 
 </project>
