@@ -47,17 +47,17 @@ public class JellyBreedingService {
         List<Jelly> jellies = jellyDataService.getUnsoldJellies(cageDTO.getCageNumber());
         List<Jelly> availableFemales = filterByGender(Gender.FEMALE, jellies);
         List<Jelly> males = filterByGender(Gender.MALE, jellies);
-        long numberOfNewBornds = 0;
+        long numberOfNewBorns = 0;
 
         for (Jelly male : males) {
-            if (jellies.size() + numberOfNewBornds < cageLimit) {
+            if (jellies.size() + numberOfNewBorns < cageLimit) {
                 JellyCouple couple = male.formCouple(availableFemales);
 
                 if (couple != null) {
                     availableFemales.remove(couple.getMother());
                     log.info("A new jelly has been born, sending kafka message to Service to register");
                     kafkaTemplate.send(breedingTopic, couple.mate());
-                    numberOfNewBornds++;
+                    numberOfNewBorns++;
                 }
             } else {
                 log.info("Cage {} is full, breeding was stopped", cageDTO.getCageNumber());
@@ -65,7 +65,7 @@ public class JellyBreedingService {
             }
         }
 
-        log.info("{} new jellies have been born in {} cage: {}", numberOfNewBornds, cageDTO.getHabitatName(), cageDTO.getCageNumber());
+        log.info("{} new jellies have been born in {} cage: {}", numberOfNewBorns, cageDTO.getHabitatName(), cageDTO.getCageNumber());
     }
 
     private List<Jelly> filterByGender(Gender gender, List<Jelly> jellies) {
