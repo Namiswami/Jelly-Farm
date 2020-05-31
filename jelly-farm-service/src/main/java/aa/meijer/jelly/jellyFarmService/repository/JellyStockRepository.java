@@ -14,5 +14,5 @@ public interface JellyStockRepository extends JpaRepository<JellyEntity, UUID> {
     @Query("FROM JellyEntity j " +
             "WHERE j.dateTimeSold = NULL " +
             "AND j.cageNumber = :cageNumber")
-    List<JellyEntity> findByCageNumberUnsold(int cageNumber);
+    List<JellyEntity> findByCageNumberUnsold(long cageNumber);
 }

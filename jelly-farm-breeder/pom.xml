@@ -8,7 +8,7 @@
 		<version>2.3.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>aa.meijer.jelly</groupId>
+	<groupId>org.meijer.jelly</groupId>
 	<artifactId>jellyFarmBreeder</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>jelly-farm-breeder</name>

@@ -14,9 +14,8 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CageEntity {
-    @Id
-    @Column(name = "cage_number")
-    private Integer cageNumber;
+    @Column(name = "cage_number", updatable = false, nullable = false)
+    private Long cageNumber;
 
     @Column(name = "habitat_name")
     private String habitatName;

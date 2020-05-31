@@ -1,76 +1,37 @@
 package aa.meijer.jelly.jellyFarmService.controller;
 
-import aa.meijer.jelly.jellyFarmService.service.JellyDetailsService;
-import aa.meijer.jelly.jellyFarmService.service.JellyOrderService;
-import aa.meijer.jelly.jellyFarmService.model.cage.CageOverview;
 import aa.meijer.jelly.jellyFarmService.model.jelly.Jelly;
-import aa.meijer.jelly.jellyFarmService.model.jelly.JellyOverview;
-import aa.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
-import aa.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
-import aa.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
+import aa.meijer.jelly.jellyFarmService.service.JellyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
-@RequestMapping("/v1")
 @Slf4j
+@RequestMapping("/v1/details")
 public class JellyDetailsController {
-    private JellyDetailsService jellyDetailsService;
-    private JellyOrderService jellyOrderService;
+    private final JellyService jellyService;
 
     @Autowired
-    public JellyDetailsController(JellyDetailsService jellyDetailsService, JellyOrderService jellyOrderService) {
-        this.jellyDetailsService = jellyDetailsService;
-        this.jellyOrderService = jellyOrderService;
+    public JellyDetailsController(JellyService jellyService) {
+        this.jellyService = jellyService;
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<JellyEntity> getJelly(@RequestParam(name = "uuid") UUID id) {
-        log.info("Getting details for single jelly");
-        return ResponseEntity.ok(jellyDetailsService.getJelly(id));
-    }
-
-    @GetMapping("/overview")
-    public ResponseEntity<JellyOverview> getAllJellies() {
-        log.info("Getting an overview");
-        return ResponseEntity.ok(jellyDetailsService.getJellyOverview());
-    }
-
-    @PostMapping("/buy")
-    public ResponseEntity buyJelly(@RequestParam(name = "color") Color color,
-                                   @RequestParam(name = "gender") Gender gender,
-                                   @RequestParam(name = "cageNumber") int cageNumber) {
-        log.info("Buying a new jelly from the jelly salesman and adding it to our farm");
-        jellyDetailsService.buyNewJelly(color, gender, cageNumber);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping("/sales")
-    public ResponseEntity<Jelly> sellJelly(@RequestParam(name = "uuid") UUID id) {
-        log.info("We sold a jelly! For money! Yay");
-        return ResponseEntity.ok(jellyDetailsService.sellJelly(id));
-    }
-
-    @PostMapping("/order")
-    public ResponseEntity placeOrder() {
-        log.info("placing an order");
-        jellyOrderService.testKafka();
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/deleteAll")
-    public ResponseEntity deleteAll() {
-        jellyDetailsService.deleteAll();
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping("/cage")
-    public ResponseEntity<CageOverview> getCages() {
-        return new ResponseEntity(jellyDetailsService.getCageOverview(), HttpStatus.OK);
+    @GetMapping("/stock")
+    public ResponseEntity<List<Jelly>> getStock(@RequestParam(name = "cageNumber", required = false) Long cageNumber) {
+        List<Jelly> response;
+        if (cageNumber == null) {
+            log.info("Received request for list of all jellies");
+            response = jellyService.getAllJellies();
+        } else {
+            log.info("Received request for list of all jellies in cage number {}", cageNumber);
+            response = jellyService.getJelliesByCage(cageNumber);
+        }
+        return ResponseEntity.ok(response);
     }
 }

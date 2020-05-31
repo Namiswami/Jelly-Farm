@@ -28,19 +28,19 @@ public class JellyEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "gender")
+    @Column(name = "gender", nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "color")
+    @Column(name = "color", nullable = false)
     @Enumerated(EnumType.STRING)
     private Color color;
 
-    @Column(name = "date_time_sold")
-    private LocalDateTime dateTimeSold;
+    @Column(name = "date_time_freed")
+    private LocalDateTime dateTimeFreed;
 
     @Column(name = "cage_number")
-    private int cageNumber;
+    private long cageNumber;
 
     public JellyEntity(Jelly jelly) {
         color = jelly.getColor();

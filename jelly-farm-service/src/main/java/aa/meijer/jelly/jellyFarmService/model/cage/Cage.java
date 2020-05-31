@@ -2,13 +2,17 @@ package aa.meijer.jelly.jellyFarmService.model.cage;
 
 import aa.meijer.jelly.jellyFarmService.model.jelly.JellyOverview;
 import aa.meijer.jelly.jellyFarmService.repository.entity.CageEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Cage {
     @JsonProperty("cageNumber")
-    private int cageNumber;
+    private long cageNumber;
 
     @JsonProperty("habitatName")
     private String habitatName;
@@ -26,5 +30,9 @@ public class Cage {
         this.cageNumber = entity.getCageNumber();
         this.habitatName = entity.getHabitatName();
         this.jellyOverview = overview;
+    }
+
+    public Cage(CageEntity entity) {
+        this(entity, null);
     }
 }

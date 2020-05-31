@@ -1,16 +1,17 @@
-package aa.meijer.jelly.jellyFarmService.model.jelly;
+package org.meijer.jelly.jellyFarmBreeder.model.jelly;
 
-import aa.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
-import aa.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
-import aa.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Color;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,14 +24,6 @@ public class Jelly {
     private Color color;
     private LocalDateTime dateTimeSold;
     private int cageNumber;
-
-    public Jelly(JellyEntity entity) {
-        color = entity.getColor();
-        gender = entity.getGender();
-        dateTimeSold = entity.getDateTimeFreed();
-        id = entity.getId();
-        cageNumber = entity.getCageNumber();
-    }
 
     public JellyCouple formCouple(List<Jelly> females) {
         Jelly mate = pickMate(females);
