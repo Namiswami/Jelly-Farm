@@ -3,6 +3,7 @@ package org.meijer.jelly.jellyFarmService.service;
 import org.meijer.jelly.jellyFarmService.exception.CageNotFoundException;
 import org.meijer.jelly.jellyFarmService.exception.JellyNotFoundException;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewListDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
@@ -46,50 +47,22 @@ public class JellyService {
     }
 
     public List<CageOverviewDTO> getCageOverview() {
-        List<CageOverviewDTO> cageOverviewDTOS = cageService.getOverview();
-        for(CageOverviewDTO cageOverviewDTO : cageOverviewDTOS) {
+        List<CageOverviewDTO> cageOverviewDTOS = cageService.getCageOverview();
+        return createOverview(cageOverviewDTOS);
+    }
+
+    public List<CageOverviewDTO> getCageOverview(List<Long> cageNumbers) {
+        List<CageOverviewDTO> cageOverviewDTOS = cageService.getCageOverview(cageNumbers);
+        return createOverview(cageOverviewDTOS);
+    }
+
+    private List<CageOverviewDTO> createOverview(List<CageOverviewDTO> cageOverviewDTOS) {
+        for(CageOverviewDTO cage : cageOverviewDTOS) {
             JellyOverviewDTO overview = new JellyOverviewDTO(
-                    jellyStockRepository.findByCageNumberUnsold(cageOverviewDTO.getCage().getCageNumber()));
-            cageOverviewDTO.setJellyOverview(overview);
+                    jellyStockRepository.findByCageNumberUnsold(cage.getCage().getCageNumber()));
+            cage.setJellyOverview(overview);
         }
         return cageOverviewDTOS;
-    }
-
-    public List<CageOverviewDTO> getCageOverview(Long cageNumber) {
-        return null;
-    }
-
-    public void buyNewJelly(Color color, Gender gender, long cageNumber) {
-        if(!cageService.existsById(cageNumber)) {
-            log.error("No cage with cage number {}", cageNumber);
-            throw new CageNotFoundException();
-        }
-
-        JellyEntity jelly = JellyEntity.builder()
-                .color(color)
-                .cageNumber(cageNumber)
-                .gender(gender)
-                .dateTimeFreed(null)
-                .build();
-
-        jellyStockRepository.save(jelly);
-
-    }
-
-    public JellyDTO sellJelly(UUID id) {
-        Optional<JellyEntity> jellyOptional = jellyStockRepository.findById(id);
-
-        if(jellyOptional.isPresent()) {
-            JellyEntity jelly = jellyOptional.get();
-            jelly.setDateTimeFreed(LocalDateTime.now());
-            jellyStockRepository.save(jelly);
-            return new JellyDTO(jelly);
-        } else throw new JellyNotFoundException();
-
-    }
-
-    public void deleteAll() {
-        jellyStockRepository.deleteAll();
     }
 
     public List<JellyDTO> getJelliesByCage(Long cageNumber) {

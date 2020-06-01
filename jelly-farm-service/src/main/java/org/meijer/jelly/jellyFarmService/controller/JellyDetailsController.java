@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,14 +57,14 @@ public class JellyDetailsController {
     }
 
     @GetMapping("overview/cage")
-    public ResponseEntity<CageOverviewListDTO> getCages(@RequestParam(name = "cageNumber", required = false) Long cageNumber) {
+    public ResponseEntity<CageOverviewListDTO> getCages(@RequestParam(name = "cageNumbers", required = false) List<Long> cageNumbers) {
         List<CageOverviewDTO> result;
-        if (cageNumber == null) {
+        if (cageNumbers == null || cageNumbers.isEmpty()) {
             log.info("Getting overview for all cages");
             result = jellyService.getCageOverview();
         } else {
-            log.info("Getting overview for cage: {}", cageNumber);
-            result = jellyService.getCageOverview(cageNumber);
+            log.info("Getting overview for cages: {}", cageNumbers);
+            result = jellyService.getCageOverview(cageNumbers);
         }
         return ResponseEntity.ok(new CageOverviewListDTO(result));
     }

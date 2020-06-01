@@ -1,14 +1,15 @@
 package org.meijer.jelly.jellyFarmService.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
-import org.meijer.jelly.jellyFarmService.repository.CageRepository;
 import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
-import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmService.repository.CageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,14 @@ public class CageService {
                 .collect(Collectors.toList()));
     }
 
-    public List<CageOverviewDTO> getOverview() {
-        List<CageEntity> entityList = cageRepository.findAll();
-        return entityList.stream()
+    public List<CageOverviewDTO> getCageOverview(List<Long> cageNumbers) {
+        return cageRepository.findAllById(cageNumbers).stream()
+                .map(CageOverviewDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<CageOverviewDTO> getCageOverview() {
+        return cageRepository.findAll().stream()
                 .map(CageOverviewDTO::new)
                 .collect(Collectors.toList());
     }

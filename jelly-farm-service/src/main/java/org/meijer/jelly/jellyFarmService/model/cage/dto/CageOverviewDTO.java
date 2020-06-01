@@ -15,12 +15,6 @@ public class CageOverviewDTO {
     @JsonProperty("jellyOverview")
     private JellyOverviewDTO jellyOverview;
 
-
-    @JsonProperty("totalJellies")
-    private long getTotalJellies() {
-        return jellyOverview.getTotal();
-    }
-
     public CageOverviewDTO(CageEntity entity, JellyOverviewDTO overview) {
         this.cage = new CageDTO(entity);
         this.jellyOverview = overview;
