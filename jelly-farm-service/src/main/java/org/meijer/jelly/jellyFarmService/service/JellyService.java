@@ -83,6 +83,7 @@ public class JellyService {
         Example<JellyEntity> example = getJellyEntityExample(cageNumber, color, gender);
         return jellyStockRepository.findAll(example).stream()
                 .map(JellyDTO::new)
+                .filter(j -> j.getDateTimeFreed() == null)
                 .collect(Collectors.toList());
     }
 
