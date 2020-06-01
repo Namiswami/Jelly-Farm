@@ -53,15 +53,15 @@ public class JellyDetailsController {
 
     @GetMapping("overview/cage")
     public ResponseEntity<CageOverviewListDTO> getCages(
-            @RequestParam(name = "cageNumbers", required = false) List<Long> cageNumbers) {
-        List<CageOverviewDTO> result;
-        if (cageNumbers == null || cageNumbers.isEmpty()) {
+            @RequestParam(name = "cageNumbers", required = false) Long cageNumber) {
+        CageOverviewListDTO result;
+        if (cageNumber == null) {
             log.info("Getting overview for all cages");
-            result = jellyService.getCageOverview();
+            result = new CageOverviewListDTO(jellyService.getCageOverview());
         } else {
-            log.info("Getting overview for cages: {}", cageNumbers);
-            result = jellyService.getCageOverview(cageNumbers);
+            log.info("Getting overview for cages: {}", cageNumber);
+            result = new CageOverviewListDTO(jellyService.getCageOverview(cageNumber));
         }
-        return ResponseEntity.ok(new CageOverviewListDTO(result));
+        return ResponseEntity.ok(result);
     }
 }

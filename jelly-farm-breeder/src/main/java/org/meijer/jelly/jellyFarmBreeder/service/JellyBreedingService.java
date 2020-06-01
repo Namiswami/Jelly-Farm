@@ -1,6 +1,7 @@
 package org.meijer.jelly.jellyFarmBreeder.service;
 
 
+import org.meijer.jelly.jellyFarmBreeder.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.cage.dto.CageDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyCouple;
@@ -56,7 +57,7 @@ public class JellyBreedingService {
                 if (couple != null) {
                     availableFemales.remove(couple.getMother());
                     log.info("A new jelly was born, producing kafka message");
-                    kafkaTemplate.send(breedingTopic, couple.mate());
+                    kafkaTemplate.send(breedingTopic, new AdoptionRequestDTO(couple.mate()));
                     numberOfNewBorns++;
                 }
             } else {

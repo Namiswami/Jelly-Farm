@@ -34,10 +34,8 @@ public class CageService {
                 .collect(Collectors.toList()));
     }
 
-    public List<CageOverviewDTO> getCageOverview(List<Long> cageNumbers) {
-        return cageRepository.findAllById(cageNumbers).stream()
-                .map(CageOverviewDTO::new)
-                .collect(Collectors.toList());
+    public CageOverviewDTO getCageOverview(Long cageNumber) {
+        return new CageOverviewDTO(cageRepository.getOne(cageNumber));
     }
 
     public List<CageOverviewDTO> getCageOverview() {
@@ -45,4 +43,5 @@ public class CageService {
                 .map(CageOverviewDTO::new)
                 .collect(Collectors.toList());
     }
+
 }

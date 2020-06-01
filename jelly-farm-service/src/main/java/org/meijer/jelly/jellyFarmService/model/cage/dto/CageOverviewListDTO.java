@@ -15,4 +15,8 @@ import java.util.List;
 public class CageOverviewListDTO {
     @JsonProperty("cages")
     private List<CageOverviewDTO> cageOverviewDTOS;
+
+    public CageOverviewListDTO(CageOverviewDTO cageOverview) {
+        this.cageOverviewDTOS = Collections.singletonList(cageOverview);
+    }
 }
