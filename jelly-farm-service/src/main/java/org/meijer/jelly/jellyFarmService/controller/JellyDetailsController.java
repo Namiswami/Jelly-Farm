@@ -53,7 +53,7 @@ public class JellyDetailsController {
 
     @GetMapping("overview/cage")
     public ResponseEntity<CageOverviewListDTO> getCages(
-            @RequestParam(name = "cageNumbers", required = false) Long cageNumber) {
+            @RequestParam(name = "cageNumber", required = false) Long cageNumber) {
         CageOverviewListDTO result;
         if (cageNumber == null) {
             log.info("Getting overview for all cages");
