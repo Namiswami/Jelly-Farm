@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1/adoption")
 @Slf4j
@@ -23,19 +25,19 @@ public class JellyAdoptionController {
     }
 
     @PostMapping("/adopt")
-    public ResponseEntity<JellyDTO> adoptJelly(@RequestBody AdoptionRequestDTO adoptionRequest) {
+    public ResponseEntity<JellyDTO> adoptJelly(@RequestBody @Valid AdoptionRequestDTO adoptionRequest) {
         log.info("Request for adoption received");
         return ResponseEntity.ok(jellyService.adoptJelly(adoptionRequest));
     }
 
     @PutMapping("/recage")
-    public ResponseEntity<JellyListDTO> recageJellies(@RequestBody RecageRequestDTO recageRequestDTO) {
+    public ResponseEntity<JellyListDTO> recageJellies(@RequestBody @Valid RecageRequestDTO recageRequestDTO) {
         log.info("Request for recaging jellies received");
         return ResponseEntity.ok(new JellyListDTO(jellyService.recageJellies(recageRequestDTO)));
     }
 
     @DeleteMapping("/free")
-    public ResponseEntity<JellyListDTO> freeJellies(@RequestBody FreeJellyRequestDTO freeJellyRequestDTO) {
+    public ResponseEntity<JellyListDTO> freeJellies(@RequestBody @Valid FreeJellyRequestDTO freeJellyRequestDTO) {
         log.info("Request for recaging jellies received");
         return ResponseEntity.ok(new JellyListDTO(jellyService.freeJellies(freeJellyRequestDTO)));
     }
