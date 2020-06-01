@@ -1,10 +1,9 @@
 package org.meijer.jelly.jellyFarmBreeder.service;
 
 
-import org.meijer.jelly.jellyFarmBreeder.model.cage.Cage;
-import org.meijer.jelly.jellyFarmBreeder.model.jelly.Jelly;
+import org.meijer.jelly.jellyFarmBreeder.model.cage.dto.CageDTO;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyCouple;
-import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyListDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 public class JellyBreedingService {
     private final String breedingTopic;
     private final Integer cageLimit;
-    private final KafkaTemplate<String, Jelly> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final JellyDataService jellyDataService;
 
     @Autowired
@@ -38,39 +36,39 @@ public class JellyBreedingService {
 
     @Scheduled(cron = "0/30 * * * * *")
     public void breedAllCages() {
-        List<Cage> cages = jellyDataService.getCages();
-        for (Cage cage: cages) {
-            breed(cage);
+        List<CageDTO> cageDTOS = jellyDataService.getCages();
+        for (CageDTO cageDTO : cageDTOS) {
+            breed(cageDTO);
         }
 
     }
 
-    private void breed(Cage cage) {
-        List<Jelly> jellies = jellyDataService.getUnsoldJellies(cage.getCageNumber());
-        List<Jelly> availableFemales = filterByGender(Gender.FEMALE, jellies);
-        List<Jelly> males = filterByGender(Gender.FEMALE, jellies);
-        long numberOfNewBornds = 0;
+    private void breed(CageDTO cageDTO) {
+        List<JellyDTO> jellies = jellyDataService.getUnsoldJellies(cageDTO.getCageNumber());
+        List<JellyDTO> availableFemales = filterByGender(Gender.FEMALE, jellies);
+        List<JellyDTO> males = filterByGender(Gender.MALE, jellies);
+        long numberOfNewBorns = 0;
 
-        for (Jelly male : males) {
-            if (jellies.size() + numberOfNewBornds < cageLimit) {
+        for (JellyDTO male : males) {
+            if (jellies.size() + numberOfNewBorns < cageLimit) {
                 JellyCouple couple = male.formCouple(availableFemales);
 
                 if (couple != null) {
                     availableFemales.remove(couple.getMother());
-                    log.info("A new jelly has been born, sending kafka message to Service to register");
+                    log.info("A new jelly was born, producing kafka message");
                     kafkaTemplate.send(breedingTopic, couple.mate());
-                    numberOfNewBornds++;
+                    numberOfNewBorns++;
                 }
             } else {
-                log.info("Cage {} is full, breeding was stopped", cage.getCageNumber());
+                log.info("Cage {} is full, breeding was stopped", cageDTO.getCageNumber());
                 break;
             }
         }
 
-        log.info("{} new jellies have been born in {} cage: {}", numberOfNewBornds, cage.getHabitatName(), cage.getCageNumber());
+        log.info("{} new jellies have been born in {} cage: {}", numberOfNewBorns, cageDTO.getHabitatName(), cageDTO.getCageNumber());
     }
 
-    private List<Jelly> filterByGender(Gender gender, List<Jelly> jellies) {
+    private List<JellyDTO> filterByGender(Gender gender, List<JellyDTO> jellies) {
         return jellies.stream()
                 .filter(j -> j.getGender() == gender)
                 .collect(Collectors.toList());

@@ -1,4 +1,4 @@
-package org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes;
+package org.meijer.jelly.jellyFarmService.model.jelly.attributes;
 
 public enum Color {
     RED, YELLOW, BLUE, GREEN, PURPLE, ORANGE, BROWN;

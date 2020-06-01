@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 
 import java.util.Random;
 
@@ -14,11 +15,11 @@ import java.util.Random;
 @AllArgsConstructor
 @Slf4j
 public class JellyCouple {
-    private Jelly father;
-    private Jelly mother;
+    private JellyDTO father;
+    private JellyDTO mother;
 
-    public Jelly mate() {
-        Jelly newBorn = Jelly.builder()
+    public JellyDTO mate() {
+        JellyDTO newBorn = JellyDTO.builder()
                 .color(determineColor(father.getColor(), mother.getColor()))
                 .gender(randomGender())
                 .cageNumber(father.getCageNumber())
