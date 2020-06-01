@@ -1,6 +1,7 @@
 package org.meijer.jelly.jellyFarmService.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmService.exception.CageNotFoundException;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
@@ -55,14 +56,23 @@ public class JellyService {
     }
 
     public List<JellyDTO> getJellies(Long cageNumber, Color color, Gender gender) {
+        if(cageNumber != null && !cageService.existsById(cageNumber)) {
+            log.error("Cage with cage number: {} does not exist", cageNumber);
+            throw new CageNotFoundException();
+        }
+
+        Example<JellyEntity> example = getJellyEntityExample(cageNumber, color, gender);
+        return jellyStockRepository.findAll(example).stream()
+                .map(JellyDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    private Example<JellyEntity> getJellyEntityExample(Long cageNumber, Color color, Gender gender) {
         JellyEntity exampleEntity = JellyEntity.builder()
                 .cageNumber(cageNumber)
                 .color(color)
                 .gender(gender)
                 .build();
-        Example<JellyEntity> example = Example.of(exampleEntity);
-        return jellyStockRepository.findAll(example).stream()
-                .map(JellyDTO::new)
-                .collect(Collectors.toList());
+        return Example.of(exampleEntity);
     }
 }
