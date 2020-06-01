@@ -1,6 +1,6 @@
 package org.meijer.jelly.jellyFarmService.repository;
 
-import org.meijer.jelly.jellyFarmService.repository.entity.CageEntity;
+import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

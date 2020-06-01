@@ -1,4 +1,4 @@
-package org.meijer.jelly.jellyFarmService.repository.entity;
+package org.meijer.jelly.jellyFarmService.model.cage.entity;
 
 import lombok.*;
 

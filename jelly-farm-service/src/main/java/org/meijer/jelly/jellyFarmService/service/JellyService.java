@@ -2,14 +2,13 @@ package org.meijer.jelly.jellyFarmService.service;
 
 import org.meijer.jelly.jellyFarmService.exception.CageNotFoundException;
 import org.meijer.jelly.jellyFarmService.exception.JellyNotFoundException;
-import org.meijer.jelly.jellyFarmService.model.cage.CageOverviewDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.CageOverviewListDTO;
-import org.meijer.jelly.jellyFarmService.model.jelly.Jelly;
-import org.meijer.jelly.jellyFarmService.model.jelly.JellyOverview;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import org.meijer.jelly.jellyFarmService.repository.JellyStockRepository;
-import org.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -41,19 +40,23 @@ public class JellyService {
         return jellyStockRepository.findById(id).get();
     }
 
-    public JellyOverview getJellyOverview() {
+    public JellyOverviewDTO getJellyOverview() {
         List<JellyEntity> allJellies = jellyStockRepository.findAll();
-        return new JellyOverview(allJellies);
+        return new JellyOverviewDTO(allJellies);
     }
 
-    public CageOverviewListDTO getCageOverview() {
+    public List<CageOverviewDTO> getCageOverview() {
         List<CageOverviewDTO> cageOverviewDTOS = cageService.getOverview();
         for(CageOverviewDTO cageOverviewDTO : cageOverviewDTOS) {
-            JellyOverview overview = new JellyOverview(
+            JellyOverviewDTO overview = new JellyOverviewDTO(
                     jellyStockRepository.findByCageNumberUnsold(cageOverviewDTO.getCage().getCageNumber()));
             cageOverviewDTO.setJellyOverview(overview);
         }
-        return new CageOverviewListDTO(cageOverviewDTOS);
+        return cageOverviewDTOS;
+    }
+
+    public List<CageOverviewDTO> getCageOverview(Long cageNumber) {
+        return null;
     }
 
     public void buyNewJelly(Color color, Gender gender, long cageNumber) {
@@ -73,14 +76,14 @@ public class JellyService {
 
     }
 
-    public Jelly sellJelly(UUID id) {
+    public JellyDTO sellJelly(UUID id) {
         Optional<JellyEntity> jellyOptional = jellyStockRepository.findById(id);
 
         if(jellyOptional.isPresent()) {
             JellyEntity jelly = jellyOptional.get();
             jelly.setDateTimeFreed(LocalDateTime.now());
             jellyStockRepository.save(jelly);
-            return new Jelly(jelly);
+            return new JellyDTO(jelly);
         } else throw new JellyNotFoundException();
 
     }
@@ -89,23 +92,23 @@ public class JellyService {
         jellyStockRepository.deleteAll();
     }
 
-    public List<Jelly> getJelliesByCage(Long cageNumber) {
+    public List<JellyDTO> getJelliesByCage(Long cageNumber) {
         if(!cageService.existsById(cageNumber)) throw new CageNotFoundException();
 
         List<JellyEntity> entityList = jellyStockRepository.findByCageNumberUnsold(cageNumber);
         return entityList.stream()
-                .map(Jelly::new)
+                .map(JellyDTO::new)
                 .collect(Collectors.toList());
     }
 
-    public List<Jelly> getAllJellies() {
+    public List<JellyDTO> getAllJellies() {
         List<JellyEntity> entityList = jellyStockRepository.findAll();
         return entityList.stream()
-                .map(Jelly::new)
+                .map(JellyDTO::new)
                 .collect(Collectors.toList());
     }
 
-    public void save(Jelly newBornJelly) {
+    public void save(JellyDTO newBornJelly) {
         jellyStockRepository.save(new JellyEntity(newBornJelly));
     }
 }

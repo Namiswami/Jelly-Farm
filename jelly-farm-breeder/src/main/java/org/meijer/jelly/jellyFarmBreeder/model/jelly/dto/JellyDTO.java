@@ -1,8 +1,9 @@
-package org.meijer.jelly.jellyFarmBreeder.model.jelly;
+package org.meijer.jelly.jellyFarmBreeder.model.jelly.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyCouple;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 @NoArgsConstructor
-public class Jelly implements Serializable {
+public class JellyDTO implements Serializable {
     @JsonProperty("id")
     private UUID id;
     @JsonProperty("gender")
@@ -30,8 +31,8 @@ public class Jelly implements Serializable {
     @JsonProperty("cageNumber")
     private long cageNumber;
 
-    public JellyCouple formCouple(List<Jelly> females) {
-        Jelly mate = pickMate(females);
+    public JellyCouple formCouple(List<JellyDTO> females) {
+        JellyDTO mate = pickMate(females);
 
         if (mate != null)
             return new JellyCouple(this, mate);
@@ -41,7 +42,7 @@ public class Jelly implements Serializable {
         }
     }
 
-    private Jelly pickMate(List<Jelly> underConsideration) {
+    private JellyDTO pickMate(List<JellyDTO> underConsideration) {
         if (underConsideration.size() > 0) {
             Random r = new Random();
             return underConsideration.get(r.nextInt(underConsideration.size()));

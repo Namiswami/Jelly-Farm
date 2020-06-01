@@ -1,11 +1,11 @@
 package org.meijer.jelly.jellyFarmService.controller;
 
-import org.meijer.jelly.jellyFarmService.model.cage.CageOverviewListDTO;
-import org.meijer.jelly.jellyFarmService.model.jelly.Jelly;
-import org.meijer.jelly.jellyFarmService.model.jelly.JellyOverview;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewListDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
-import org.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import org.meijer.jelly.jellyFarmService.service.JellyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +26,6 @@ public class JellyController {
         this.jellyService = jellyService;
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<JellyEntity> getJelly(@RequestParam(name = "uuid") UUID id) {
-        log.info("Getting details for single jelly");
-        return ResponseEntity.ok(jellyService.getJelly(id));
-    }
-
-    @GetMapping("/overview")
-    public ResponseEntity<JellyOverview> getAllJellies() {
-        log.info("Getting an overview");
-        return ResponseEntity.ok(jellyService.getJellyOverview());
-    }
-
     @PostMapping("/buy")
     public ResponseEntity buyJelly(@RequestParam(name = "color") Color color,
                                    @RequestParam(name = "gender") Gender gender,
@@ -48,7 +36,7 @@ public class JellyController {
     }
 
     @GetMapping("/sales")
-    public ResponseEntity<Jelly> sellJelly(@RequestParam(name = "uuid") UUID id) {
+    public ResponseEntity<JellyDTO> sellJelly(@RequestParam(name = "uuid") UUID id) {
         log.info("We sold a jelly! For money! Yay");
         return ResponseEntity.ok(jellyService.sellJelly(id));
     }

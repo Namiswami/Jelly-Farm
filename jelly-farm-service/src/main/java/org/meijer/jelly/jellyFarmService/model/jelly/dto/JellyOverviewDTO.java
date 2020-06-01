@@ -1,7 +1,7 @@
-package org.meijer.jelly.jellyFarmService.model.jelly;
+package org.meijer.jelly.jellyFarmService.model.jelly.dto;
 
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
-import org.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class JellyOverview {
+public class JellyOverviewDTO {
     @JsonProperty("blue")
     private long blue;
 
@@ -32,7 +32,7 @@ public class JellyOverview {
     @JsonProperty("brown")
     private long brown;
 
-    public JellyOverview(List<JellyEntity> jellies) {
+    public JellyOverviewDTO(List<JellyEntity> jellies) {
         blue = countJellies(Color.BLUE, jellies);
         yellow = countJellies(Color.YELLOW, jellies);
         red = countJellies(Color.RED, jellies);

@@ -1,8 +1,6 @@
 package org.meijer.jelly.jellyFarmService.controller;
 
-import org.meijer.jelly.jellyFarmService.model.cage.CageDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.CageListDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.CageOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
 import org.meijer.jelly.jellyFarmService.service.CageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
 
 @RestController
 @Slf4j

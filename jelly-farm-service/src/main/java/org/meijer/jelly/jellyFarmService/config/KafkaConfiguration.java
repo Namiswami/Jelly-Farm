@@ -1,10 +1,8 @@
 package org.meijer.jelly.jellyFarmService.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.meijer.jelly.jellyFarmService.model.jelly.Jelly;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -14,10 +12,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @EnableKafka
 @Configuration
@@ -33,16 +27,16 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, Jelly> consumerFactory() {
+    public ConsumerFactory<String, JellyDTO> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(
                 kafkaProperties.buildConsumerProperties(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(Jelly.class, false));
+                new JsonDeserializer<>(JellyDTO.class, false));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Jelly> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Jelly> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, JellyDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, JellyDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 

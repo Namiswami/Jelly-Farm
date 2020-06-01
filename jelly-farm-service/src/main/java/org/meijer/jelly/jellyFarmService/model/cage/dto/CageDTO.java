@@ -1,10 +1,10 @@
-package org.meijer.jelly.jellyFarmService.model.cage;
+package org.meijer.jelly.jellyFarmService.model.cage.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.meijer.jelly.jellyFarmService.repository.entity.CageEntity;
+import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 
 @Getter
 @Setter

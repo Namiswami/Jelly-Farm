@@ -1,8 +1,8 @@
 package org.meijer.jelly.jellyFarmBreeder.service;
 
 
-import org.meijer.jelly.jellyFarmBreeder.model.cage.CageDTO;
-import org.meijer.jelly.jellyFarmBreeder.model.jelly.Jelly;
+import org.meijer.jelly.jellyFarmBreeder.model.cage.dto.CageDTO;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyCouple;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
 import lombok.extern.slf4j.Slf4j;
@@ -44,18 +44,18 @@ public class JellyBreedingService {
     }
 
     private void breed(CageDTO cageDTO) {
-        List<Jelly> jellies = jellyDataService.getUnsoldJellies(cageDTO.getCageNumber());
-        List<Jelly> availableFemales = filterByGender(Gender.FEMALE, jellies);
-        List<Jelly> males = filterByGender(Gender.MALE, jellies);
+        List<JellyDTO> jellies = jellyDataService.getUnsoldJellies(cageDTO.getCageNumber());
+        List<JellyDTO> availableFemales = filterByGender(Gender.FEMALE, jellies);
+        List<JellyDTO> males = filterByGender(Gender.MALE, jellies);
         long numberOfNewBorns = 0;
 
-        for (Jelly male : males) {
+        for (JellyDTO male : males) {
             if (jellies.size() + numberOfNewBorns < cageLimit) {
                 JellyCouple couple = male.formCouple(availableFemales);
 
                 if (couple != null) {
                     availableFemales.remove(couple.getMother());
-                    log.info("A new jelly has been born, sending kafka message to Service to register");
+                    log.info("A new jelly was born, producing kafka message");
                     kafkaTemplate.send(breedingTopic, couple.mate());
                     numberOfNewBorns++;
                 }
@@ -68,7 +68,7 @@ public class JellyBreedingService {
         log.info("{} new jellies have been born in {} cage: {}", numberOfNewBorns, cageDTO.getHabitatName(), cageDTO.getCageNumber());
     }
 
-    private List<Jelly> filterByGender(Gender gender, List<Jelly> jellies) {
+    private List<JellyDTO> filterByGender(Gender gender, List<JellyDTO> jellies) {
         return jellies.stream()
                 .filter(j -> j.getGender() == gender)
                 .collect(Collectors.toList());

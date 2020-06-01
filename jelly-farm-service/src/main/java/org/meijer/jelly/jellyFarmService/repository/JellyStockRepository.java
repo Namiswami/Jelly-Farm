@@ -1,6 +1,6 @@
 package org.meijer.jelly.jellyFarmService.repository;
 
-import org.meijer.jelly.jellyFarmService.repository.entity.JellyEntity;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

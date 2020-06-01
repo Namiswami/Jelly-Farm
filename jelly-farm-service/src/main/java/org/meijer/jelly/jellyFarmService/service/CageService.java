@@ -1,10 +1,10 @@
 package org.meijer.jelly.jellyFarmService.service;
 
-import org.meijer.jelly.jellyFarmService.model.cage.CageDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.CageListDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.CageOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
 import org.meijer.jelly.jellyFarmService.repository.CageRepository;
-import org.meijer.jelly.jellyFarmService.repository.entity.CageEntity;
+import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package org.meijer.jelly.jellyFarmService.model.cage;
+package org.meijer.jelly.jellyFarmService.model.cage.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

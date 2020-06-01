@@ -1,8 +1,7 @@
-package org.meijer.jelly.jellyFarmService.model.cage;
+package org.meijer.jelly.jellyFarmService.model.cage.dto;
 
-import org.meijer.jelly.jellyFarmService.model.jelly.JellyOverview;
-import org.meijer.jelly.jellyFarmService.repository.entity.CageEntity;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ public class CageOverviewDTO {
     private CageDTO cage;
 
     @JsonProperty("jellyOverview")
-    private JellyOverview jellyOverview;
+    private JellyOverviewDTO jellyOverview;
 
 
     @JsonProperty("totalJellies")
@@ -22,7 +21,7 @@ public class CageOverviewDTO {
         return jellyOverview.getTotal();
     }
 
-    public CageOverviewDTO(CageEntity entity, JellyOverview overview) {
+    public CageOverviewDTO(CageEntity entity, JellyOverviewDTO overview) {
         this.cage = new CageDTO(entity);
         this.jellyOverview = overview;
     }

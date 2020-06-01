@@ -1,4 +1,4 @@
-package org.meijer.jelly.jellyFarmService.model.jelly;
+package org.meijer.jelly.jellyFarmService.model.jelly.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,5 +15,5 @@ import java.util.List;
 @NoArgsConstructor
 public class JellyListDTO {
     @JsonProperty("jellyList")
-    private List<Jelly> jellyList;
+    private List<JellyDTO> jellyDTOList;
 }

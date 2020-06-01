@@ -1,6 +1,6 @@
 package org.meijer.jelly.jellyFarmService.listener;
 
-import org.meijer.jelly.jellyFarmService.model.jelly.Jelly;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.service.JellyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class BreederListener {
     }
 
     @KafkaListener(topics = "${kafka.topic.breeding}")
-    public void listen(@Payload Jelly newBornJelly) {
+    public void listen(@Payload JellyDTO newBornJelly) {
         log.info("Received message that a new {} {} jelly has been born in cage {}",
                 newBornJelly.getGender(),
                 newBornJelly.getColor(),

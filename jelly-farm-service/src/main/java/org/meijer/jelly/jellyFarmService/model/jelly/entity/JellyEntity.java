@@ -1,6 +1,6 @@
-package org.meijer.jelly.jellyFarmService.repository.entity;
+package org.meijer.jelly.jellyFarmService.model.jelly.entity;
 
-import org.meijer.jelly.jellyFarmService.model.jelly.Jelly;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import lombok.*;
@@ -42,9 +42,9 @@ public class JellyEntity {
     @Column(name = "cage_number")
     private long cageNumber;
 
-    public JellyEntity(Jelly jelly) {
-        color = jelly.getColor();
-        gender = jelly.getGender();
-        cageNumber = jelly.getCageNumber();
+    public JellyEntity(JellyDTO jellyDTO) {
+        color = jellyDTO.getColor();
+        gender = jellyDTO.getGender();
+        cageNumber = jellyDTO.getCageNumber();
     }
 }
