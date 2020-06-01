@@ -2,6 +2,7 @@ package org.meijer.jelly.jellyFarmService.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.meijer.jelly.jellyFarmService.exception.CageNotFoundException;
+import org.meijer.jelly.jellyFarmService.exception.JellyNotFoundException;
 import org.meijer.jelly.jellyFarmService.exception.NotEnoughRoomInCageException;
 import org.meijer.jelly.jellyFarmService.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmService.model.adoption.FreeJellyRequestDTO;
@@ -20,8 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,12 @@ public class JellyService {
     }
 
     public JellyDTO getJelly(UUID id) {
-        return new JellyDTO(jellyStockRepository.getOne(id));
+        Optional<JellyEntity> optionalJellyEntity = jellyStockRepository.findById(id);
+        if(optionalJellyEntity.isPresent()) return new JellyDTO(optionalJellyEntity.get());
+        else {
+            log.error("Jelly with ID {} was not found", id);
+            throw new JellyNotFoundException();
+        }
     }
 
     public JellyOverviewDTO getJellyOverview() {
@@ -58,7 +64,7 @@ public class JellyService {
     }
 
     public CageOverviewDTO getCageOverview(Long cageNumber) {
-        return createOverview(cageService.getCageOverview(cageNumber));
+        return createOverview(cageService.getSingleCageOverview(cageNumber));
     }
 
     private CageOverviewDTO createOverview(CageOverviewDTO cage) {
@@ -71,7 +77,7 @@ public class JellyService {
     public List<JellyDTO> getJellies(Long cageNumber, Color color, Gender gender) {
         if(cageNumber != null && !cageService.existsById(cageNumber)) {
             log.error("Cage with cage number: {} does not exist", cageNumber);
-            throw new CageNotFoundException();
+            throw new CageNotFoundException(cageNumber);
         }
 
         Example<JellyEntity> example = getJellyEntityExample(cageNumber, color, gender);
@@ -90,6 +96,10 @@ public class JellyService {
     }
 
     public JellyDTO adoptJelly(AdoptionRequestDTO adoptionRequest) {
+        log.info("Checking if there is enough room in cage {}", adoptionRequest.getCageNumber());
+        if(!isEnoughRoomInCage(adoptionRequest.getCageNumber(), 1))
+            throw new NotEnoughRoomInCageException(adoptionRequest.getCageNumber());
+
         log.info("A new {} {} jelly has been adopted in cage {}",
                 adoptionRequest.getGender(),
                 adoptionRequest.getColor(),
@@ -100,6 +110,21 @@ public class JellyService {
                 .gender(adoptionRequest.getGender())
                 .build();
         return new JellyDTO(jellyStockRepository.save(newJelly));
+    }
+
+    public List<JellyDTO> freeJellies(FreeJellyRequestDTO freeJellyRequestDTO) {
+        log.info("Retrieving all jellies to be freed");
+        List<JellyEntity> entities = jellyStockRepository.findAllById(freeJellyRequestDTO.getJellyIds());
+
+        LocalDateTime now = LocalDateTime.now();
+        for(JellyEntity entity : entities) {
+            entity.setDateTimeFreed(now);
+        }
+
+        log.info("Freeing all jellies in the list");
+        return jellyStockRepository.saveAll(entities).stream()
+                .map(JellyDTO::new)
+                .collect(Collectors.toList());
     }
 
     public List<JellyDTO> recageJellies(RecageRequestDTO recageRequestDTO) {
@@ -119,23 +144,8 @@ public class JellyService {
                 .collect(Collectors.toList());
     }
 
-    public List<JellyDTO> freeJellies(FreeJellyRequestDTO freeJellyRequestDTO) {
-        log.info("Retrieving all jellies to be freed");
-        List<JellyEntity> entities = jellyStockRepository.findAllById(freeJellyRequestDTO.getJellyIds());
-
-        LocalDateTime now = LocalDateTime.now();
-        for(JellyEntity entity : entities) {
-            entity.setDateTimeFreed(now);
-        }
-
-        log.info("Freeing all jellies in the list");
-        return jellyStockRepository.saveAll(entities).stream()
-                .map(JellyDTO::new)
-                .collect(Collectors.toList());
-    }
-
     private boolean isEnoughRoomInCage(Long newCageNumber, int numberOfNewJellies) {
-        CageOverviewDTO overview = cageService.getCageOverview(newCageNumber);
+        CageOverviewDTO overview = getCageOverview(newCageNumber);
         return (overview.getJellyOverview().getTotal() + numberOfNewJellies) <= cageLimit;
     }
 }

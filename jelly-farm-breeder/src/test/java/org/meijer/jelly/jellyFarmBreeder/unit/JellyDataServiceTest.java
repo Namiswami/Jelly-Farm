@@ -16,6 +16,4 @@ public class JellyDataServiceTest {
     @InjectMocks
     private JellyDataService jellyDataService;
 
-    @Test
-
 }
