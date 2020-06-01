@@ -33,7 +33,7 @@ public class JellyDetailsController {
                                                  @RequestParam(name = "gender", required = false) Gender gender) {
         log.info("Getting list of jellies with filters: cageNumber: {}, color: {}, gender: {}",
                 cageNumber,
-                cageNumber,
+                color,
                 gender);
         List<JellyDTO> result = jellyService.getJellies(cageNumber, color, gender);
         return ResponseEntity.ok(new JellyListDTO(result));
