@@ -2,6 +2,7 @@ package org.meijer.jelly.jellyFarmService.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.meijer.jelly.jellyFarmService.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,16 +28,16 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, JellyDTO> consumerFactory() {
+    public ConsumerFactory<String, AdoptionRequestDTO> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(
                 kafkaProperties.buildConsumerProperties(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(JellyDTO.class, false));
+                new JsonDeserializer<>(AdoptionRequestDTO.class, false));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, JellyDTO> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, JellyDTO> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, AdoptionRequestDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, AdoptionRequestDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 
