@@ -1,6 +1,7 @@
 package org.meijer.jelly.jellyFarmService.listener;
 
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
+import org.meijer.jelly.jellyFarmService.service.JellyAdoptionService;
 import org.meijer.jelly.jellyFarmService.service.JellyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class BreederListener {
-    private final JellyService jellyService;
+    private final JellyAdoptionService jellyAdoptionService;
 
     @Autowired
-    public BreederListener(JellyService jellyService) {
-        this.jellyService = jellyService;
+    public BreederListener(JellyAdoptionService jellyAdoptionService) {
+        this.jellyAdoptionService = jellyAdoptionService;
     }
 
     @KafkaListener(topics = "${kafka.topic.breeding}")
@@ -24,6 +25,6 @@ public class BreederListener {
                 newBornJelly.getGender(),
                 newBornJelly.getColor(),
                 newBornJelly.getCageNumber());
-        jellyService.save(newBornJelly);
+        jellyAdoptionService.save(newBornJelly);
     }
 }

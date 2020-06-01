@@ -1,22 +1,18 @@
 package org.meijer.jelly.jellyFarmService.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewListDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
+import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyListDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
-import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import org.meijer.jelly.jellyFarmService.service.JellyService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,33 +27,33 @@ public class JellyDetailsController {
         this.jellyService = jellyService;
     }
 
-    @GetMapping()
-    public ResponseEntity<JellyEntity> getJelly(@RequestParam(name = "uuid") UUID id) {
+    @GetMapping("/stock")
+    public ResponseEntity<JellyListDTO> getStock(@RequestParam(name = "cageNumber", required = false) Long cageNumber,
+                                                 @RequestParam(name = "color", required = false) Color color,
+                                                 @RequestParam(name = "gender", required = false) Gender gender) {
+        log.info("Getting list of jellies with filters: cageNumber: {}, color: {}, gender: {}",
+                cageNumber,
+                cageNumber,
+                gender);
+        List<JellyDTO> result = jellyService.getJellies(cageNumber, color, gender);
+        return ResponseEntity.ok(new JellyListDTO(result));
+    }
+
+    @GetMapping("/stock/{uuid}")
+    public ResponseEntity<JellyDTO> getJelly(@PathVariable(name = "uuid") UUID id) {
         log.info("Getting details for single jelly");
         return ResponseEntity.ok(jellyService.getJelly(id));
     }
 
-    @GetMapping("/stock")
-    public ResponseEntity<JellyListDTO> getStock(@RequestParam(name = "cageNumber", required = false) Long cageNumber) {
-        List<JellyDTO> result;
-        if (cageNumber == null) {
-            log.info("Received request for list of all jellies");
-            result = jellyService.getAllJellies();
-        } else {
-            log.info("Received request for list of all jellies in cage number {}", cageNumber);
-            result = jellyService.getJelliesByCage(cageNumber);
-        }
-        return ResponseEntity.ok(new JellyListDTO(result));
-    }
-
     @GetMapping("/overview")
     public ResponseEntity<JellyOverviewDTO> getAllJellies() {
-        log.info("Getting an overview");
+        log.info("Getting an overview for all jellies");
         return ResponseEntity.ok(jellyService.getJellyOverview());
     }
 
     @GetMapping("overview/cage")
-    public ResponseEntity<CageOverviewListDTO> getCages(@RequestParam(name = "cageNumbers", required = false) List<Long> cageNumbers) {
+    public ResponseEntity<CageOverviewListDTO> getCages(
+            @RequestParam(name = "cageNumbers", required = false) List<Long> cageNumbers) {
         List<CageOverviewDTO> result;
         if (cageNumbers == null || cageNumbers.isEmpty()) {
             log.info("Getting overview for all cages");
