@@ -40,7 +40,7 @@ public class JellyEntity {
     private LocalDateTime dateTimeFreed;
 
     @Column(name = "cage_number")
-    private long cageNumber;
+    private Long cageNumber;
 
     public JellyEntity(JellyDTO jellyDTO) {
         color = jellyDTO.getColor();
