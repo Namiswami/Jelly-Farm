@@ -51,7 +51,7 @@ public class JellyBreedingService {
         long numberOfNewBorns = 0;
 
         for (JellyDTO male : males) {
-            if (jellies.size() + numberOfNewBorns < cageLimit) {
+            if (isEnoughRoomInCage(jellies, numberOfNewBorns)) {
                 JellyCouple couple = male.formCouple(availableFemales);
 
                 if (couple != null) {
@@ -67,6 +67,10 @@ public class JellyBreedingService {
         }
 
         log.info("{} new jellies have been born in {} cage: {}", numberOfNewBorns, cageDTO.getHabitatName(), cageDTO.getCageNumber());
+    }
+
+    private boolean isEnoughRoomInCage(List<JellyDTO> jellies, long numberOfNewBorns) {
+        return jellies.size() + numberOfNewBorns < cageLimit;
     }
 
     private List<JellyDTO> filterByGender(Gender gender, List<JellyDTO> jellies) {

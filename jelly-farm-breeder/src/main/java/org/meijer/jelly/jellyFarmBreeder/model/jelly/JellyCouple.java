@@ -11,7 +11,6 @@ import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import java.util.Random;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @Slf4j
 public class JellyCouple {

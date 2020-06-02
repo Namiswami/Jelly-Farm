@@ -1,31 +1,39 @@
-package org.meijer.jelly.jellyFarmBreeder.config;
+package org.meijer.jelly.jellyFarmBreeder.integration.config;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.meijer.jelly.jellyFarmBreeder.model.adoption.AdoptionRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@TestConfiguration
 @EnableKafka
-@Configuration
-public class KafkaConfiguration {
+public class KafkaTestConfiguration {
+    @Value("${kafka.topic.breeding}")
+    private String breedingTopic;
+
     private KafkaProperties kafkaProperties;
 
     @Autowired
-    public KafkaConfiguration(KafkaProperties kafkaProperties) {
+    public KafkaTestConfiguration(KafkaProperties kafkaProperties) {
         this.kafkaProperties = kafkaProperties;
     }
 
     @Bean
+    @Primary
     public Map<String, Object> producerConfig() {
         Map<String, Object> props =
                 new HashMap<>(kafkaProperties.buildProducerProperties());
@@ -44,5 +52,18 @@ public class KafkaConfiguration {
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public ConsumerFactory<String, AdoptionRequestDTO> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(
+                kafkaProperties.buildConsumerProperties(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(AdoptionRequestDTO.class, false));
+    }
+
+    @Bean
+    public NewTopic breedingTopic() {
+        return new NewTopic(breedingTopic, 3, (short) 1);
     }
 }
