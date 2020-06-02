@@ -101,7 +101,7 @@ public class JellyService {
         if(!isEnoughRoomInCage(adoptionRequest.getCageNumber(), 1))
             throw new NotEnoughRoomInCageException(adoptionRequest.getCageNumber());
 
-        log.info("A new {} {} jelly has been adopted in cage {}",
+        log.info("A new {} {} jelly has been welcomed in cage {}",
                 adoptionRequest.getGender(),
                 adoptionRequest.getColor(),
                 adoptionRequest.getCageNumber());
