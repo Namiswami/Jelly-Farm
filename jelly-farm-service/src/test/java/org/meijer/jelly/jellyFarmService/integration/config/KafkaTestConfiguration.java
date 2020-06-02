@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -60,6 +61,15 @@ public class KafkaTestConfiguration {
                 kafkaProperties.buildConsumerProperties(),
                 new StringDeserializer(),
                 new JsonDeserializer<>(AdoptionRequestDTO.class, false));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, AdoptionRequestDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, AdoptionRequestDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+
+        return factory;
     }
 
     @Bean

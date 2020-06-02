@@ -101,16 +101,17 @@ public class JellyService {
         if(!isEnoughRoomInCage(adoptionRequest.getCageNumber(), 1))
             throw new NotEnoughRoomInCageException(adoptionRequest.getCageNumber());
 
-        log.info("A new {} {} jelly has been welcomed in cage {}",
-                adoptionRequest.getGender(),
-                adoptionRequest.getColor(),
-                adoptionRequest.getCageNumber());
         JellyEntity newJelly = JellyEntity.builder()
                 .cageNumber(adoptionRequest.getCageNumber())
                 .color(adoptionRequest.getColor())
                 .gender(adoptionRequest.getGender())
                 .build();
-        return new JellyDTO(jellyStockRepository.save(newJelly));
+        JellyEntity entity = jellyStockRepository.save(newJelly);
+        log.info("A new {} {} jelly has been welcomed in cage {}",
+                adoptionRequest.getGender(),
+                adoptionRequest.getColor(),
+                adoptionRequest.getCageNumber());
+        return new JellyDTO(entity);
     }
 
     public List<JellyDTO> freeJellies(FreeJellyRequestDTO freeJellyRequestDTO) {
