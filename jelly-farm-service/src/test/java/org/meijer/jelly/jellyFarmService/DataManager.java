@@ -1,10 +1,16 @@
 package org.meijer.jelly.jellyFarmService;
 
 import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
+import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
+import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import org.meijer.jelly.jellyFarmService.repository.CageRepository;
 import org.meijer.jelly.jellyFarmService.repository.JellyStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.*;
 
 @Service
 public class DataManager {
@@ -17,9 +23,42 @@ public class DataManager {
         this.cageRepository = cageRepository;
     }
 
-    public void createDefaultCage() {
-        cageRepository.save(new CageEntity(1L, "Tropical Forest"));
+    public void createCage() {
+        createCage(1L);
+    }
+
+    public void createCage(Long cageNumber) {
+        createCage(cageNumber, "Tropical Forest");
+    }
+
+    public void createCage(Long cageNumber, String habitatName) {
+        cageRepository.save(new CageEntity(cageNumber, habitatName));
     }
 
 
+    public JellyEntity saveNewJelly(Gender gender, Color color, Long cageNumber) {
+        return jellyStockRepository.save(JellyEntity.builder()
+                .gender(gender)
+                .color(color)
+                .cageNumber(cageNumber)
+                .build());
+    }
+
+    public JellyEntity saveNewJelly(Gender gender, Color color) {
+        return saveNewJelly(gender, color, 1L);
+    }
+
+    public JellyEntity saveNewJelly(Gender gender) {
+        return saveNewJelly(gender, BLUE, 1L);
+    }
+
+    public JellyEntity saveNewJelly(Long cageNumber) {
+        return saveNewJelly(MALE, BLUE, cageNumber);
+    }
+
+    public void saveMultipleJellies(int numberOfJellies, long cageNumber) {
+        for(int i = 0; i < numberOfJellies ; i++) {
+            saveNewJelly(cageNumber);
+        }
+    }
 }

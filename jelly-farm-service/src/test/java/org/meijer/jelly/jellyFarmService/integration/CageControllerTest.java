@@ -8,19 +8,14 @@ import org.meijer.jelly.jellyFarmService.JellyFarmServiceApplication;
 import org.meijer.jelly.jellyFarmService.controller.CageController;
 import org.meijer.jelly.jellyFarmService.exception.GlobalExceptionHandler;
 import org.meijer.jelly.jellyFarmService.integration.config.KafkaTestConfiguration;
-import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.client.RestTemplate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -59,11 +54,10 @@ public class CageControllerTest {
     @Test
     public void allCagesEndpointReturnsListOfAllCages() throws Exception {
         //given
-        dataManager.createDefaultCage();
+        dataManager.createCage();
 
         //when
-        mockMvc.perform(get("/v1/cage/all")
-                .contentType(APPLICATION_JSON))
+        mockMvc.perform(get("/v1/cage/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cageList[0].cageNumber").value("1"))
                 .andExpect(jsonPath("$.cageList[0].habitatName").value("Tropical Forest"));

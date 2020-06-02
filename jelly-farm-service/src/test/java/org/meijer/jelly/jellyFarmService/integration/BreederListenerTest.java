@@ -19,7 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
@@ -47,7 +46,7 @@ public class BreederListenerTest {
 
     @Before
     public void init() {
-        dataManager.createDefaultCage();
+        dataManager.createCage();
     }
 
     @Test

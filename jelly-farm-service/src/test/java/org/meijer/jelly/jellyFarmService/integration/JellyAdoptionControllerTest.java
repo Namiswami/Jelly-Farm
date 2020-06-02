@@ -5,10 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.meijer.jelly.jellyFarmService.DataManager;
 import org.meijer.jelly.jellyFarmService.JellyFarmServiceApplication;
-import org.meijer.jelly.jellyFarmService.controller.CageController;
 import org.meijer.jelly.jellyFarmService.controller.JellyAdoptionController;
 import org.meijer.jelly.jellyFarmService.exception.GlobalExceptionHandler;
 import org.meijer.jelly.jellyFarmService.integration.config.KafkaTestConfiguration;
+import org.meijer.jelly.jellyFarmService.model.adoption.AdoptionRequestDTO;
+import org.meijer.jelly.jellyFarmService.model.adoption.FreeJellyRequestDTO;
+import org.meijer.jelly.jellyFarmService.model.adoption.RecageRequestDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
+import org.meijer.jelly.jellyFarmService.repository.JellyStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -18,8 +22,17 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.*;
+import static org.meijer.jelly.jellyFarmService.ObjectHelper.mapToJson;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -37,6 +50,9 @@ public class JellyAdoptionControllerTest {
     @Autowired
     private JellyAdoptionController adoptionController;
 
+    @Autowired
+    private JellyStockRepository jellyStockRepository;
+
 
     @Autowired
     private DataManager dataManager;
@@ -50,15 +66,116 @@ public class JellyAdoptionControllerTest {
     }
 
     @Test
-    public void allCagesEndpointReturnsListOfAllCages() throws Exception {
+    public void adoptionEndpointSavesNewJellyInTheDB() throws Exception {
         //given
-        dataManager.createDefaultCage();
+        dataManager.createCage();
+
+        AdoptionRequestDTO adoptionRequest = new AdoptionRequestDTO(1L, BLUE, MALE);
 
         //when
-        mockMvc.perform(get("/v1/adoption/")
-                .contentType(APPLICATION_JSON))
+        mockMvc.perform(post("/v1/adoption/adopt")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(adoptionRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.cageList[0].cageNumber").value("1"))
-                .andExpect(jsonPath("$.cageList[0].habitatName").value("Tropical Forest"));
+                .andExpect(jsonPath("$.cageNumber").value("1"))
+                .andExpect(jsonPath("$.color").value(BLUE.toString()))
+                .andExpect(jsonPath("$.gender").value(MALE.toString()))
+                .andExpect(jsonPath("$.id").exists());
+
+        //then
+        List<JellyEntity> jellies = jellyStockRepository.findAll();
+        assertEquals(1, jellies.size());
+
+        JellyEntity jelly = jellies.get(0);
+        assertEquals(Long.valueOf(1), jelly.getCageNumber());
+        assertEquals(BLUE, jelly.getColor());
+        assertEquals(MALE, jelly.getGender());
+        assertNull(jelly.getDateTimeFreed());
+        assertNotNull(jelly.getId());
+    }
+
+    @Test
+    public void recageEndpointChangesCageOnJelly() throws Exception {
+        //given
+        UUID id = dataManager.saveNewJelly(1L).getId();
+        dataManager.createCage(1L, "Grassy Field");
+        dataManager.createCage(2L, "Humid Savannah");
+
+        RecageRequestDTO recageRequest = new RecageRequestDTO(Collections.singletonList(id), 2L);
+
+        //when
+        mockMvc.perform(put("/v1/adoption/recage")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(recageRequest)))
+                .andExpect(jsonPath("$.jellyList[0].cageNumber").value("2"))
+                .andExpect(jsonPath("$.jellyList[0].color").value(BLUE.toString()))
+                .andExpect(jsonPath("$.jellyList[0].gender").value(MALE.toString()))
+                .andExpect(jsonPath("$.jellyList[0].id").exists());
+
+        //then
+        List<JellyEntity> jellies = jellyStockRepository.findAll();
+        assertEquals(1, jellies.size());
+
+        JellyEntity jelly = jellies.get(0);
+        assertEquals(Long.valueOf(2), jelly.getCageNumber());
+        assertEquals(BLUE, jelly.getColor());
+        assertEquals(MALE, jelly.getGender());
+        assertNull(jelly.getDateTimeFreed());
+        assertNotNull(jelly.getId());
+    }
+
+    @Test
+    public void recageEndpointGivesErrorMessageWhenCageDoesNotHaveSpace() throws Exception {
+        //given
+        UUID id = dataManager.saveNewJelly(1L).getId();
+        dataManager.createCage(1L, "Grassy Field");
+        dataManager.saveMultipleJellies(20, 2L);
+        dataManager.createCage(2L, "Humid Savannah");
+
+        RecageRequestDTO recageRequest = new RecageRequestDTO(
+                Collections.singletonList(id),
+                2L);
+
+        //when
+        mockMvc.perform(put("/v1/adoption/recage")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(recageRequest)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void recageEndpointGivesErrorMessageWhenJelliesAreAlreadyInTheNewCage() throws Exception {
+        //given
+        UUID id = dataManager.saveNewJelly(1L).getId();
+        dataManager.createCage(1L, "Grassy Field");
+
+        RecageRequestDTO recageRequest = new RecageRequestDTO(
+                Collections.singletonList(id),
+                1L);
+
+        //when
+        mockMvc.perform(put("/v1/adoption/recage")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(recageRequest)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void freeEndpointGivesJellyATimeFreed() throws Exception {
+        //given
+        dataManager.createCage();
+        UUID id = dataManager.saveNewJelly(1L).getId();
+        FreeJellyRequestDTO freeRequest = new FreeJellyRequestDTO(Collections.singletonList(id));
+
+        //when
+        mockMvc.perform(delete("/v1/adoption/free")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(freeRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jellyList[0].cageNumber").value("1"))
+                .andExpect(jsonPath("$.jellyList[0].color").value(BLUE.toString()))
+                .andExpect(jsonPath("$.jellyList[0].gender").value(MALE.toString()))
+                .andExpect(jsonPath("$.jellyList[0].id").exists())
+                .andExpect(jsonPath("$.jellyList[0].dateTimeFreed").exists());
     }
 }

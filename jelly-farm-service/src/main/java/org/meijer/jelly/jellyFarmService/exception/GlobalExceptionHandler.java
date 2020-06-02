@@ -60,6 +60,14 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handle(NewCageCannotBeOldCageException ex) {
+        log.error(EXCEPTION_OCCURED, ex);
+        return ex.getMessage();
+    }
+
 
     @ExceptionHandler
     @ResponseBody

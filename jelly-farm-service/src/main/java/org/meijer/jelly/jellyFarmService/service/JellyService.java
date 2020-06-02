@@ -3,6 +3,7 @@ package org.meijer.jelly.jellyFarmService.service;
 import lombok.extern.slf4j.Slf4j;
 import org.meijer.jelly.jellyFarmService.exception.CageNotFoundException;
 import org.meijer.jelly.jellyFarmService.exception.JellyNotFoundException;
+import org.meijer.jelly.jellyFarmService.exception.NewCageCannotBeOldCageException;
 import org.meijer.jelly.jellyFarmService.exception.NotEnoughRoomInCageException;
 import org.meijer.jelly.jellyFarmService.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmService.model.adoption.FreeJellyRequestDTO;
@@ -134,11 +135,17 @@ public class JellyService {
         if(!isEnoughRoomInCage(recageRequestDTO.getNewCageNumber(), recageRequestDTO.getJellyIds().size()))
             throw new NotEnoughRoomInCageException(recageRequestDTO.getNewCageNumber());
 
+        List<JellyEntity> erroneousJellies = new ArrayList<>();
+
         log.info("Retrieving all jellies to be updated");
         List<JellyEntity> entities = jellyStockRepository.findAllById(recageRequestDTO.getJellyIds());
         for(JellyEntity entity : entities) {
-            entity.setCageNumber(recageRequestDTO.getNewCageNumber());
+            if(entity.getCageNumber().equals(recageRequestDTO.getNewCageNumber())) erroneousJellies.add(entity);
+            else entity.setCageNumber(recageRequestDTO.getNewCageNumber());
         }
+
+        log.error("There were jellies that were already in the new cage, not updating any jellies");
+        if(erroneousJellies.size() > 0) throw new NewCageCannotBeOldCageException(erroneousJellies);
 
         log.info("Updating all jellies with new cage");
         return jellyStockRepository.saveAll(entities).stream()

@@ -1,5 +1,7 @@
 package org.meijer.jelly.jellyFarmService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
@@ -44,6 +46,11 @@ public class ObjectHelper {public static JellyListDTO getJellyListDTO(int number
         List<CageDTO> cageDTOList = new ArrayList<>();
         cageDTOList.add(new CageDTO(1, "Indoor Hotsprings"));
         return new CageListDTO(cageDTOList);
+    }
+
+    public static String mapToJson(Object obj) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(obj);
     }
 
 }
