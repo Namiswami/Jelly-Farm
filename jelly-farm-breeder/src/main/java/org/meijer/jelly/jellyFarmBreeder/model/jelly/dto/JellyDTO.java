@@ -15,6 +15,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
 public class JellyDTO implements Serializable {

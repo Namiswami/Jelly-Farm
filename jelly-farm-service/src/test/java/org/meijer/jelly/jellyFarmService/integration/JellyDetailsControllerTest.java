@@ -7,12 +7,10 @@ import org.meijer.jelly.jellyFarmService.DataManager;
 import org.meijer.jelly.jellyFarmService.JellyFarmServiceApplication;
 import org.meijer.jelly.jellyFarmService.controller.JellyDetailsController;
 import org.meijer.jelly.jellyFarmService.exception.GlobalExceptionHandler;
-import org.meijer.jelly.jellyFarmService.integration.config.KafkaTestConfiguration;
 import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 import org.meijer.jelly.jellyFarmService.repository.JellyStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -30,10 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 @SpringBootTest(
-        classes = {JellyFarmServiceApplication.class, KafkaTestConfiguration.class},
+        classes = {JellyFarmServiceApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @RunWith(SpringRunner.class)
-@Import(KafkaTestConfiguration.class)
 @EmbeddedKafka(brokerProperties={"log.dir=./tmp/kafka/eventListenerTest", "port=9092", "listeners=PLAINTEXT://:9092"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class JellyDetailsControllerTest {
