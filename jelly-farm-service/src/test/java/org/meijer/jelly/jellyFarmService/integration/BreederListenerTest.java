@@ -30,7 +30,7 @@ import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FE
 @RunWith(SpringRunner.class)
 @Import(KafkaTestConfiguration.class)
 @EmbeddedKafka(brokerProperties={"log.dir=./tmp/kafka/eventListenerTest", "port=9092", "listeners=PLAINTEXT://:9092"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class BreederListenerTest {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
