@@ -9,6 +9,8 @@ import org.meijer.jelly.jellyFarmService.repository.JellyStockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.*;
 
@@ -36,29 +38,39 @@ public class DataManager {
     }
 
 
-    public JellyEntity saveNewJelly(Gender gender, Color color, Long cageNumber) {
+    public JellyEntity saveNewJelly(Gender gender, Color color, Long cageNumber, boolean freed) {
         return jellyStockRepository.save(JellyEntity.builder()
                 .gender(gender)
                 .color(color)
                 .cageNumber(cageNumber)
+                .dateTimeFreed(freed ? LocalDateTime.now() : null)
                 .build());
     }
 
     public JellyEntity saveNewJelly(Gender gender, Color color) {
-        return saveNewJelly(gender, color, 1L);
+        return saveNewJelly(gender, color, 1L, false);
     }
 
     public JellyEntity saveNewJelly(Gender gender) {
-        return saveNewJelly(gender, BLUE, 1L);
+        return saveNewJelly(gender, BLUE, 1L, false);
     }
 
     public JellyEntity saveNewJelly(Long cageNumber) {
-        return saveNewJelly(MALE, BLUE, cageNumber);
+        return saveNewJelly(MALE, BLUE, cageNumber, false);
     }
 
     public void saveMultipleJellies(int numberOfJellies, long cageNumber) {
         for(int i = 0; i < numberOfJellies ; i++) {
             saveNewJelly(cageNumber);
         }
+    }
+
+    public void cleanUp() {
+        jellyStockRepository.deleteAll();
+        cageRepository.deleteAll();
+    }
+
+    public JellyEntity saveFreedJelly() {
+        return saveNewJelly(MALE, BLUE, 1L, true);
     }
 }

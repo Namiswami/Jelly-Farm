@@ -1,5 +1,6 @@
 package org.meijer.jelly.jellyFarmService.integration;
 
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,6 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 import static org.meijer.jelly.jellyFarmService.ObjectHelper.mapToJson;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
-import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -53,16 +53,15 @@ public class JellyAdoptionControllerTest {
     @Autowired
     private JellyStockRepository jellyStockRepository;
 
-
     @Autowired
     private DataManager dataManager;
 
     @Before
     public void init() {
         mockMvc = standaloneSetup(adoptionController)
-                .setMessageConverters(new MappingJackson2HttpMessageConverter())
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
+        dataManager.cleanUp();
     }
 
     @Test
@@ -92,6 +91,50 @@ public class JellyAdoptionControllerTest {
         assertEquals(MALE, jelly.getGender());
         assertNull(jelly.getDateTimeFreed());
         assertNotNull(jelly.getId());
+    }
+
+    @Test
+    public void typeValidationFailureForJellyAdoptionRequestGivesBadRequest() throws Exception {
+        JSONObject faultyInput = new JSONObject();
+        faultyInput.put("color","not-a-color");
+        faultyInput.put("gender","FEMALE");
+        faultyInput.put("cageNumber","1");
+        //when
+        mockMvc.perform(post("/v1/adoption/adopt")
+                .contentType(APPLICATION_JSON)
+                .content(faultyInput.toString()))
+                .andExpect(status().isBadRequest());
+
+        faultyInput = new JSONObject();
+        faultyInput.put("color","BLUE");
+        faultyInput.put("gender","not-a-gender");
+        faultyInput.put("cageNumber","1");
+        //when
+        mockMvc.perform(post("/v1/adoption/adopt")
+                .contentType(APPLICATION_JSON)
+                .content(faultyInput.toString()))
+                .andExpect(status().isBadRequest());
+
+        faultyInput = new JSONObject();
+        faultyInput.put("color","BLUE");
+        faultyInput.put("gender","MALE");
+        faultyInput.put("cageNumber","not-a-long");
+        //when
+        mockMvc.perform(post("/v1/adoption/adopt")
+                .contentType(APPLICATION_JSON)
+                .content(faultyInput.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void adoptionReturnsBadRequestIfCageDoesntExist() throws Exception {
+        AdoptionRequestDTO adoptionRequest = new AdoptionRequestDTO(1L, BLUE, MALE);
+
+        //when
+        mockMvc.perform(post("/v1/adoption/adopt")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(adoptionRequest)))
+                .andExpect(status().isNotFound());
     }
 
     @Test

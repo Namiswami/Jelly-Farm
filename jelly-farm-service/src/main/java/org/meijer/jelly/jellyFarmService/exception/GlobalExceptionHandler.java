@@ -2,6 +2,7 @@ package org.meijer.jelly.jellyFarmService.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -48,6 +49,14 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handle(ConstraintViolationException ex) {
+        log.error(EXCEPTION_OCCURED, ex);
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handle(HttpMessageNotReadableException ex) {
         log.error(EXCEPTION_OCCURED, ex);
         return ex.getMessage();
     }

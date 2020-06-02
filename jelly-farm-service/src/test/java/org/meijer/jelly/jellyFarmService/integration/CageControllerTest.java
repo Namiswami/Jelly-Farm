@@ -46,9 +46,9 @@ public class CageControllerTest {
     @Before
     public void init() {
             mockMvc = standaloneSetup(cageController)
-                    .setMessageConverters(new MappingJackson2HttpMessageConverter())
                     .setControllerAdvice(new GlobalExceptionHandler())
                     .build();
+            dataManager.cleanUp();
     }
 
     @Test

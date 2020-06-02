@@ -8,10 +8,14 @@ import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyListDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 
@@ -53,4 +57,27 @@ public class ObjectHelper {public static JellyListDTO getJellyListDTO(int number
         return mapper.writeValueAsString(obj);
     }
 
+    public static JellyEntity getJellyEntity(UUID uuid) {
+        return JellyEntity.builder()
+            .cageNumber(1L)
+            .color(BLUE)
+            .dateTimeFreed(null)
+            .gender(MALE)
+            .id(uuid)
+            .build();
+    }
+
+    public static List<JellyEntity> getJellyEntityList() {
+        return Arrays.asList(getJellyEntity(UUID.randomUUID()),
+                getJellyEntity(UUID.randomUUID()),
+                getJellyEntity(UUID.randomUUID()));
+    }
+
+    public static CageListDTO getCageDTOList() {
+        return new CageListDTO(Arrays.asList(getCageDTO(1L), getCageDTO(2L)));
+    }
+
+    public static CageDTO getCageDTO(long cageNumber) {
+        return new CageDTO(cageNumber, "White Room");
+    }
 }
