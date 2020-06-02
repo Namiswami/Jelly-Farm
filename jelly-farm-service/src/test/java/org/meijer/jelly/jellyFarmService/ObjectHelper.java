@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
+import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyListDTO;
+import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 
 import java.util.ArrayList;
@@ -79,5 +82,15 @@ public class ObjectHelper {public static JellyListDTO getJellyListDTO(int number
 
     public static CageDTO getCageDTO(long cageNumber) {
         return new CageDTO(cageNumber, "White Room");
+    }
+
+    public static List<CageOverviewDTO> getCageOverviewList() {
+        return Arrays.asList(getCageOverviewDTO(1L), getCageOverviewDTO(2L));
+    }
+
+    private static CageOverviewDTO getCageOverviewDTO(long cageNumber) {
+        return new CageOverviewDTO(
+                new CageEntity(cageNumber, "White Room"),
+                new JellyOverviewDTO(getJellyEntityList()));
     }
 }

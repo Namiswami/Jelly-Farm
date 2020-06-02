@@ -2,6 +2,7 @@ package org.meijer.jelly.jellyFarmService.unit;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.meijer.jelly.jellyFarmService.ObjectHelper;
 import org.meijer.jelly.jellyFarmService.exception.JellyNotFoundException;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
@@ -88,17 +89,19 @@ public class JellyServiceTest {
     @Test
     public void getCageOverview() {
         //given
-        when(cageService.getAllCages()).thenReturn(getCageDTOList());
+        when(cageService.getCageOverview()).thenReturn(getCageOverviewList());
         when(jellyStockRepository.findByCageNumberUnsold(anyLong()))
                 .thenReturn(getJellyEntityList());
 
         //when
         List<CageOverviewDTO> overviews = jellyService.getCageOverview();
 
+        assertEquals(2, overviews.size());
+
         //then
         for(int i = 0; i < overviews.size() ; i++) {
             CageOverviewDTO cageOverview = overviews.get(i);
-            assertEquals( i, cageOverview.getCage().getCageNumber());
+            assertEquals( i + 1, cageOverview.getCage().getCageNumber());
             assertEquals( "White Room", cageOverview.getCage().getHabitatName());
 
             JellyOverviewDTO overview = cageOverview.getJellyOverview();

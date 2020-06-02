@@ -93,7 +93,7 @@ public class JellyDetailsControllerTest {
     public void getSingleJellyReturnsSingleJelly() throws Exception {
         JellyEntity jelly = dataManager.saveNewJelly(1L);
 
-        mockMvc.perform(get("/v1/details/stock/" + jelly))
+        mockMvc.perform(get("/v1/details/stock/" + jelly.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.color").value(BLUE.toString()))
                 .andExpect(jsonPath("$.cageNumber").value(1))
