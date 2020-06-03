@@ -1,0 +1,29 @@
+Jelly Farm
+
+RUNNING THE APPLICATION
+The application is a fun project designed to show off some skills. It is made up out of 2 microservices, and uses a Postgres DB and Kafka message broker.
+The fastest way to get the application running is to use the docker-compose file, found in the jelly-farm-resources project folder, in the docker directory.
+Just navigate to this directory and type the magic words:
+
+$ docker-compose up -d
+
+Docker will download the images needed from dockerhub, and boot up the applications.
+Everything should be working out-of-the-box.
+
+Give the app a minute or so to boot, and you can then use the postman collection in the jelly-farm-resources/documentation to start using the app!
+
+SOME BACKGROUND
+Jellies are little creatures that hop around the world. They have a color and can be male or female, but otherwise have no special properties. Except their flavour of course!
+This application simulates a 'jelly farm'.
+It can be used to manage your own jelly farm, and comes with a jelly breeding extension that let's jellies reproduce.
+Jellies live in cages and reproduce only with those in the same cage. A male jelly can only mate with a female jelly, but this is probably no surprise.
+The reproduction timer is currently set to 30 seconds, meaning every 30 seconds, all male jellies will look for a mate and produce a new jelly into the farm if succesful!
+
+IDEAS FOR FUTURE
+- Adding push notifications or something of the sort to give active updates on breeding events (hence the message driven architecture)
+- Building a GUI for the application
+- Adding more properties to cages, such as climate
+- Protect jellies from their inborn incestuous tendencies :S by adding a lineage system
+- And much more!
+
+Please ask the developer any question you'd like! It's a showcase project, but it's not perfect. There are still some todos and optimizations to be made.
