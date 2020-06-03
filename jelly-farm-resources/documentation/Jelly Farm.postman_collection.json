@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "9325e4d5-c629-405e-8908-af57783d5087",
+		"name": "Jelly Farm",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Adopt Jelly",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cageNumber\": 1,\n\t\"color\": \"BLUE\",\n\t\"gender\": \"MALE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8081/v1/adoption/adopt",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"adoption",
+						"adopt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Recage Jellies",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newCageNumber\": 2,\n\t\"jellyIds\": [\"2cbc9ff9-f56b-4939-aab1-1d443d5f4e2c\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/adoption/recage",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"adoption",
+						"recage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Free Jellies",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"jellyIds\":[\"6f2e5d70-9c8c-402c-9954-a2ab860ee17d\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/adoption/free",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"adoption",
+						"free"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Cage Overview",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/details/overview/cage?cageNumber=1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"details",
+						"overview",
+						"cage"
+					],
+					"query": [
+						{
+							"key": "cageNumber",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Jelly Overview",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/details/overview",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"details",
+						"overview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Jellies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8081/v1/overview",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"overview"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Single Jelly",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/details/stock/a8a54c61-e241-44c7-ad0f-c2e2f2012900",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"details",
+						"stock",
+						"a8a54c61-e241-44c7-ad0f-c2e2f2012900"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
