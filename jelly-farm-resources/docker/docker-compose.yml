@@ -31,7 +31,7 @@ services:
   
   jelly-farm-service:
     container_name: jelly-farm-service
-    image: jelly-farm-service
+    image: namiswami/jelly-farm-service:firsttry
     ports: 
       - "8080:8080"
     depends_on: 
@@ -42,7 +42,7 @@ services:
   
   jelly-farm-breeder:
     container_name: jelly-farm-breeder
-    image: jelly-farm-breeder
+    image: namiswami/jelly-farm-breeder
     depends_on: 
       - jelly-farm-service
     links:
