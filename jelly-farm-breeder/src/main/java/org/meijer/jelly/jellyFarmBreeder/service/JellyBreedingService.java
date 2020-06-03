@@ -1,11 +1,12 @@
 package org.meijer.jelly.jellyFarmBreeder.service;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmBreeder.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.cage.dto.CageDTO;
-import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.JellyCouple;
 import org.meijer.jelly.jellyFarmBreeder.model.jelly.attributes.Gender;
-import lombok.extern.slf4j.Slf4j;
+import org.meijer.jelly.jellyFarmBreeder.model.jelly.dto.JellyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -50,13 +51,13 @@ public class JellyBreedingService {
         long numberOfNewBorns = 0;
 
         for (JellyDTO male : males) {
-            if (jellies.size() + numberOfNewBorns < cageLimit) {
+            if (isEnoughRoomInCage(jellies, numberOfNewBorns)) {
                 JellyCouple couple = male.formCouple(availableFemales);
 
                 if (couple != null) {
                     availableFemales.remove(couple.getMother());
                     log.info("A new jelly was born, producing kafka message");
-                    kafkaTemplate.send(breedingTopic, couple.mate());
+                    kafkaTemplate.send(breedingTopic, new AdoptionRequestDTO(couple.mate()));
                     numberOfNewBorns++;
                 }
             } else {
@@ -66,6 +67,10 @@ public class JellyBreedingService {
         }
 
         log.info("{} new jellies have been born in {} cage: {}", numberOfNewBorns, cageDTO.getHabitatName(), cageDTO.getCageNumber());
+    }
+
+    private boolean isEnoughRoomInCage(List<JellyDTO> jellies, long numberOfNewBorns) {
+        return jellies.size() + numberOfNewBorns < cageLimit;
     }
 
     private List<JellyDTO> filterByGender(Gender gender, List<JellyDTO> jellies) {

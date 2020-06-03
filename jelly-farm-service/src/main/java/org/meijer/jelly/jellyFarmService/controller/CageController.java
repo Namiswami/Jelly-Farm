@@ -22,6 +22,7 @@ public class CageController {
 
     @GetMapping("/all")
     public ResponseEntity<CageListDTO> getAllCages() {
+
         return ResponseEntity.ok(cageService.getAllCages());
     }
 

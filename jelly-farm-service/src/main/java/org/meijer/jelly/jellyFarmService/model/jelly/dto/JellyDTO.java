@@ -1,5 +1,6 @@
 package org.meijer.jelly.jellyFarmService.model.jelly.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
@@ -15,7 +16,7 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JellyDTO {
     @JsonProperty("id")
     private UUID id;

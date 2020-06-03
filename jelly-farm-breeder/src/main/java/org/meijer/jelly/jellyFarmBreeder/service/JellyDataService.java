@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -53,7 +53,7 @@ public class JellyDataService {
         ResponseEntity<JellyListDTO> response = restTemplate.getForEntity(uri, JellyListDTO.class);
         if(response.getBody() == null) {
             log.error("The call to the jelly service failed, no response body");
-            throw new RestClientException("Call to jelly service failed, no response body");
+            return Collections.emptyList();
         }
 
         return response.getBody().getJellyDTOList();

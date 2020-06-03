@@ -14,11 +14,10 @@ import java.util.Random;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@NoArgsConstructor
 public class JellyDTO implements Serializable {
     @JsonProperty("id")
     private UUID id;

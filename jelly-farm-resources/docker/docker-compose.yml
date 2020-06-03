@@ -1,0 +1,50 @@
+version: '3.5'
+services:
+  jelly-farm-pg:
+    container_name: jelly-farm-pg
+    image: postgres:11.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: jelly-farm-pg
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+  
+  jelly-farm-service:
+    container_name: jelly-farm-service
+    image: namiswami/jelly-farm-service
+    ports: 
+      - "8080:8080"
+    depends_on: 
+      - jelly-farm-pg
+    links:
+      - "jelly-farm-pg:jelly-farm-pg"
+      - "kafka:kafka"
+  
+  jelly-farm-breeder:
+    container_name: jelly-farm-breeder
+    image: namiswami/jelly-farm-breeder
+    depends_on: 
+      - jelly-farm-service
+    links:
+      - "jelly-farm-service:jelly-farm-service"
+      - "kafka:kafka"
