@@ -24,6 +24,7 @@ import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.*;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -169,6 +170,55 @@ public class JellyDetailsControllerTest {
         //when-then
         mockMvc.perform(get("/v1/details/stock/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getCageOverviewGivesBackCageOverviewForSpecificCage() throws Exception {
+        //given
+        dataManager.saveThreeBlueMales(3, 1L);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/overview/cage")
+                .param("cageNumber", "1"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.cages.[0].cage.cageNumber").value(1))
+                .andExpect(jsonPath("$.cages.[0].cage.habitatName").value("Tropical Forest"))
+                .andExpect(jsonPath("$.cages.[0].jellyOverview.total").value(3))
+                .andExpect(jsonPath("$.cages.[0].jellyOverview.blue").value(3));
+    }
+
+    @Test
+    public void getCageOverviewGivesBackCageOverviewForAllCages() throws Exception {
+        //given
+        dataManager.createCage(2L);
+        dataManager.saveThreeBlueMales(3, 1L);
+        dataManager.saveThreeBlueMales(3, 2L);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/overview/cage"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.cages.[0].cage.cageNumber").value(1))
+                .andExpect(jsonPath("$.cages.[0].cage.habitatName").value("Tropical Forest"))
+                .andExpect(jsonPath("$.cages.[0].jellyOverview.total").value(3))
+                .andExpect(jsonPath("$.cages.[0].jellyOverview.blue").value(3))
+                .andExpect(jsonPath("$.cages.[1].cage.cageNumber").value(2))
+                .andExpect(jsonPath("$.cages.[1].cage.habitatName").value("Tropical Forest"))
+                .andExpect(jsonPath("$.cages.[1].jellyOverview.total").value(3))
+                .andExpect(jsonPath("$.cages.[1].jellyOverview.blue").value(3));
+    }
+
+    public void getOverviewGivesBackCageOverviewForAllJellies() throws Exception {
+        //given
+        dataManager.createCage(2L);
+        dataManager.saveThreeBlueMales(3, 1L);
+        dataManager.saveThreeBlueMales(3, 2L);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/overview/cage"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jellyOverview.total").value(6))
+                .andExpect(jsonPath("$.jellyOverview.blue").value(6));
     }
 
 }

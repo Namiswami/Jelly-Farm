@@ -69,7 +69,6 @@
 				<version>1.5.2</version>
 				<configuration>
 					<excludedClasses>
-						<param>org.meijer.jelly.jellyFarmBreeder.config.*</param>
 						<param>org.meijer.jelly.jellyFarmBreeder.JellyFarmBreederApplication</param>
 					</excludedClasses>
 				</configuration>
@@ -81,8 +80,6 @@
 				<version>0.8.5</version>
 				<configuration>
 					<excludes>
-						<exclude>**/*AppConfiguration.*</exclude>
-						<exclude>**/*KafkaConfiguration.*</exclude>
 						<exclude>**/*JellyFarmBreederApplication.*</exclude>
 					</excludes>
 				</configuration>
