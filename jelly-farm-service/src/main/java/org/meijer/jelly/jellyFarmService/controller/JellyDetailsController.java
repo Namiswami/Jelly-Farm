@@ -51,7 +51,7 @@ public class JellyDetailsController {
         return ResponseEntity.ok(jellyService.getJellyOverview());
     }
 
-    @GetMapping("overview/cage")
+    @GetMapping("/overview/cage")
     public ResponseEntity<CageOverviewListDTO> getCages(
             @RequestParam(name = "cageNumber", required = false) Long cageNumber) {
         CageOverviewListDTO result;
