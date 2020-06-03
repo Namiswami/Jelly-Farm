@@ -168,7 +168,7 @@ public class JellyAdoptionControllerTest {
         //given
         UUID id = dataManager.saveNewJelly(1L).getId();
         dataManager.createCage(1L, "Grassy Field");
-        dataManager.saveMultipleJellies(20, 2L);
+        dataManager.saveThreeBlueMales(20, 2L);
         dataManager.createCage(2L, "Humid Savannah");
 
         RecageRequestDTO recageRequest = new RecageRequestDTO(

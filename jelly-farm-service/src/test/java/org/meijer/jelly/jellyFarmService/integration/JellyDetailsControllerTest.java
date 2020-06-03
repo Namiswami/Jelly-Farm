@@ -20,7 +20,8 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
-import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.*;
+import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -56,9 +57,68 @@ public class JellyDetailsControllerTest {
 
     @Test
     public void getAllJelliesReturnsAllJellies() throws Exception {
-        dataManager.saveMultipleJellies(3, 1L);
+        //given
+        dataManager.saveThreeBlueMales(3, 1L);
 
+        //when-then
         mockMvc.perform(get("/v1/details/stock"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jellyList", hasSize(3)))
+                .andExpect(jsonPath("$.jellyList.[*].color", containsInAnyOrder(BLUE.toString(), BLUE.toString(), BLUE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].cageNumber", containsInAnyOrder(1,1,1)))
+                .andExpect(jsonPath("$.jellyList.[*].gender", containsInAnyOrder(MALE.toString(), MALE.toString() ,MALE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].id", hasSize(3)));
+    }
+
+    @Test
+    public void getAllJelliesReturnsAllJelliesFilteredByColor() throws Exception {
+        //given
+        dataManager.saveThreeBlueMales(3, 1L);
+        dataManager.saveNewJelly(MALE, YELLOW);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/stock")
+                .param("color", BLUE.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jellyList", hasSize(3)))
+                .andExpect(jsonPath("$.jellyList.[*].color", containsInAnyOrder(BLUE.toString(), BLUE.toString(), BLUE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].cageNumber", containsInAnyOrder(1,1,1)))
+                .andExpect(jsonPath("$.jellyList.[*].gender", containsInAnyOrder(MALE.toString(), MALE.toString() ,MALE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].id", hasSize(3)));
+    }
+
+    @Test
+    public void getAllJelliesReturnsAllJelliesFilterByGenderAndColor() throws Exception {
+        //given
+        dataManager.saveThreeBlueMales(3, 1L);
+        dataManager.saveNewJelly(FEMALE, BLUE);
+        dataManager.saveNewJelly(MALE, RED);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/stock")
+                .param("color", BLUE.toString())
+                .param("gender", MALE.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jellyList", hasSize(3)))
+                .andExpect(jsonPath("$.jellyList.[*].color", containsInAnyOrder(BLUE.toString(), BLUE.toString(), BLUE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].cageNumber", containsInAnyOrder(1,1,1)))
+                .andExpect(jsonPath("$.jellyList.[*].gender", containsInAnyOrder(MALE.toString(), MALE.toString() ,MALE.toString())))
+                .andExpect(jsonPath("$.jellyList.[*].id", hasSize(3)));
+    }
+
+    @Test
+    public void getAllJelliesReturnsAllJelliesFilteredByCageGenderAndColor() throws Exception {
+        //given
+        dataManager.saveThreeBlueMales(3, 1L);
+        dataManager.saveNewJelly(2L);
+        dataManager.saveNewJelly(MALE, RED);
+        dataManager.saveNewJelly(FEMALE, BLUE);
+
+        //when-then
+        mockMvc.perform(get("/v1/details/stock")
+                .param("color", BLUE.toString())
+                .param("cageNumber", "1")
+                .param("gender", MALE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.jellyList", hasSize(3)))
                 .andExpect(jsonPath("$.jellyList.[*].color", containsInAnyOrder(BLUE.toString(), BLUE.toString(), BLUE.toString())))
@@ -69,9 +129,11 @@ public class JellyDetailsControllerTest {
 
     @Test
     public void getAllJelliesReturnsAllJelliesExceptFreedJellies() throws Exception {
+        //given
         dataManager.saveFreedJelly();
-        dataManager.saveMultipleJellies(3, 1L);
+        dataManager.saveThreeBlueMales(3, 1L);
 
+        //when-then
         mockMvc.perform(get("/v1/details/stock"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.jellyList", hasSize(3)))
@@ -82,9 +144,18 @@ public class JellyDetailsControllerTest {
     }
 
     @Test
+    public void getAllJelliesGives400WhenInvalidParameterValues() throws Exception {
+        mockMvc.perform(get("/v1/details/stock")
+                .param("gender", "not-a-gender"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void getSingleJellyReturnsSingleJelly() throws Exception {
+        //given
         JellyEntity jelly = dataManager.saveNewJelly(1L);
 
+        //when-then
         mockMvc.perform(get("/v1/details/stock/" + jelly.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.color").value(BLUE.toString()))
@@ -95,6 +166,7 @@ public class JellyDetailsControllerTest {
 
     @Test
     public void getSingleJellyReturns404WhenNotFound() throws Exception {
+        //when-then
         mockMvc.perform(get("/v1/details/stock/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }

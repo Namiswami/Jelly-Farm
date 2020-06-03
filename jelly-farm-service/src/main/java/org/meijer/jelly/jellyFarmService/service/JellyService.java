@@ -68,13 +68,6 @@ public class JellyService {
         return createOverview(cageService.getSingleCageOverview(cageNumber));
     }
 
-    private CageOverviewDTO createOverview(CageOverviewDTO cage) {
-        JellyOverviewDTO overview = new JellyOverviewDTO(
-                jellyStockRepository.findByCageNumberUnsold(cage.getCage().getCageNumber()));
-        cage.setJellyOverview(overview);
-        return cage;
-    }
-
     public List<JellyDTO> getJellies(Long cageNumber, Color color, Gender gender) {
         if(cageNumber != null && !cageService.existsById(cageNumber)) {
             log.error("Cage with cage number: {} does not exist", cageNumber);
@@ -86,15 +79,6 @@ public class JellyService {
                 .map(JellyDTO::new)
                 .filter(j -> j.getDateTimeFreed() == null)
                 .collect(Collectors.toList());
-    }
-
-    private Example<JellyEntity> getJellyEntityExample(Long cageNumber, Color color, Gender gender) {
-        JellyEntity exampleEntity = JellyEntity.builder()
-                .cageNumber(cageNumber)
-                .color(color)
-                .gender(gender)
-                .build();
-        return Example.of(exampleEntity);
     }
 
     public JellyDTO adoptJelly(AdoptionRequestDTO adoptionRequest) {
@@ -153,8 +137,24 @@ public class JellyService {
                 .collect(Collectors.toList());
     }
 
+    private CageOverviewDTO createOverview(CageOverviewDTO cage) {
+        JellyOverviewDTO overview = new JellyOverviewDTO(
+                jellyStockRepository.findByCageNumberUnsold(cage.getCage().getCageNumber()));
+        cage.setJellyOverview(overview);
+        return cage;
+    }
+
     private boolean isEnoughRoomInCage(Long newCageNumber, int numberOfNewJellies) {
         CageOverviewDTO overview = getCageOverview(newCageNumber);
         return (overview.getJellyOverview().getTotal() + numberOfNewJellies) <= cageLimit;
+    }
+
+    private Example<JellyEntity> getJellyEntityExample(Long cageNumber, Color color, Gender gender) {
+        JellyEntity exampleEntity = JellyEntity.builder()
+                .cageNumber(cageNumber)
+                .color(color)
+                .gender(gender)
+                .build();
+        return Example.of(exampleEntity);
     }
 }

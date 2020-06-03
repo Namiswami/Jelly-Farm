@@ -2,14 +2,12 @@ package org.meijer.jelly.jellyFarmService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.meijer.jelly.jellyFarmService.model.cage.dto.CageDTO;
-import org.meijer.jelly.jellyFarmService.model.cage.dto.CageListDTO;
+import org.meijer.jelly.jellyFarmService.model.adoption.AdoptionRequestDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.dto.CageOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.cage.entity.CageEntity;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color;
 import org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyDTO;
-import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyListDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.dto.JellyOverviewDTO;
 import org.meijer.jelly.jellyFarmService.model.jelly.entity.JellyEntity;
 
@@ -19,26 +17,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Color.BLUE;
-import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.FEMALE;
 import static org.meijer.jelly.jellyFarmService.model.jelly.attributes.Gender.MALE;
 
-public class ObjectHelper {public static JellyListDTO getJellyListDTO(int numberOfMales, int numberOfFemales, Color colorOne, Color colorTwo) {
-    List<JellyDTO> jellies = new ArrayList<>();
-    for(int i = 0; i < numberOfFemales ; i++) {
-        JellyDTO jellyMale = getJellyDTO(FEMALE, colorOne);
-        jellies.add(jellyMale);
-    }
-    for(int i = 0; i < numberOfMales ; i++) {
-        JellyDTO jellyMale = getJellyDTO(MALE, colorTwo);
-        jellies.add(jellyMale);
-    }
-    return new JellyListDTO(jellies);
-}
-
-    public static JellyListDTO getJellyListDTO(int numberOfMales, int numberOfFemales, Color color) {
-        return getJellyListDTO(numberOfMales, numberOfFemales, color, color);
-    }
-
+public class ObjectHelper {
     public static JellyDTO getJellyDTO(Gender gender, Color color) {
         return JellyDTO.builder()
                 .cageNumber(1)
@@ -47,12 +28,6 @@ public class ObjectHelper {public static JellyListDTO getJellyListDTO(int number
                 .gender(gender)
                 .id(null)
                 .build();
-    }
-
-    public static CageListDTO getCageListDTO() {
-        List<CageDTO> cageDTOList = new ArrayList<>();
-        cageDTOList.add(new CageDTO(1, "Indoor Hotsprings"));
-        return new CageListDTO(cageDTOList);
     }
 
     public static String mapToJson(Object obj) throws JsonProcessingException {
@@ -71,26 +46,40 @@ public class ObjectHelper {public static JellyListDTO getJellyListDTO(int number
     }
 
     public static List<JellyEntity> getJellyEntityList() {
-        return Arrays.asList(getJellyEntity(UUID.randomUUID()),
-                getJellyEntity(UUID.randomUUID()),
-                getJellyEntity(UUID.randomUUID()));
+        List<JellyEntity> list = new ArrayList<>();
+        do {
+            list.add(getJellyEntity(UUID.randomUUID()));
+        } while (list.size() < 3);
+        return list;
     }
 
-    public static CageListDTO getCageDTOList() {
-        return new CageListDTO(Arrays.asList(getCageDTO(1L), getCageDTO(2L)));
-    }
-
-    public static CageDTO getCageDTO(long cageNumber) {
-        return new CageDTO(cageNumber, "White Room");
+    public static List<JellyEntity> getJellyEntityListForFullCage() {
+        List<JellyEntity> entities = new ArrayList<>();
+        do {
+            entities.add(getJellyEntity(UUID.randomUUID()));
+        } while (entities.size() < 20);
+        return entities;
     }
 
     public static List<CageOverviewDTO> getCageOverviewList() {
         return Arrays.asList(getCageOverviewDTO(1L), getCageOverviewDTO(2L));
     }
 
-    private static CageOverviewDTO getCageOverviewDTO(long cageNumber) {
+    public static CageOverviewDTO getCageOverviewDTO(long cageNumber) {
         return new CageOverviewDTO(
                 new CageEntity(cageNumber, "White Room"),
                 new JellyOverviewDTO(getJellyEntityList()));
+    }
+
+    public static CageEntity getCageEntity() {
+        return new CageEntity(1L, "Cloudy Bay");
+    }
+
+    public static List<CageEntity> getCageEntityList() {
+        return Arrays.asList(getCageEntity(), getCageEntity(), getCageEntity());
+    }
+
+    public static AdoptionRequestDTO getAdoptionRequest() {
+        return new AdoptionRequestDTO(1L, BLUE, MALE);
     }
 }

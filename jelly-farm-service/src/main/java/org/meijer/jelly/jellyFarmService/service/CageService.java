@@ -42,7 +42,6 @@ public class CageService {
             log.error("Cage with Number {} does not exist", cageNumber);
             throw new CageNotFoundException(cageNumber);
         }
-
     }
 
     public List<CageOverviewDTO> getCageOverview() {

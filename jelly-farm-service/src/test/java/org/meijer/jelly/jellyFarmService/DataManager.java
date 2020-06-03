@@ -59,7 +59,7 @@ public class DataManager {
         return saveNewJelly(MALE, BLUE, cageNumber, false);
     }
 
-    public void saveMultipleJellies(int numberOfJellies, long cageNumber) {
+    public void saveThreeBlueMales(int numberOfJellies, long cageNumber) {
         for(int i = 0; i < numberOfJellies ; i++) {
             saveNewJelly(cageNumber);
         }
